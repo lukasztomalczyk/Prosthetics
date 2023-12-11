@@ -1,0 +1,47 @@
+﻿@page "/doctors"
+@using Microsoft.EntityFrameworkCore
+@using Prosthetics.Components.Enums
+@using Prosthetics.Components.Layout
+@using Prosthetics.Persistance
+@using Prosthetics.Persistance.Entities
+@inject ProstheticsDbContext _dbContext
+@inject NavigationManager NavManager
+
+<h3>Wybierz lekarza</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Imię i nazwisko</th>
+            <th scope="col">Akcja</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_doctors != null)
+        {
+            @foreach (var doctor in _doctors)
+            {
+                <tr>
+                    <td></td>
+                    <td>@doctor.FirstName @doctor.LastName</td>
+                    <td><ButtonComponent Text="Zlecenia" OnActionClick="@OnDoctorClick(doctor.Id)" Type="TypeOfButton.PRIMARY"></ButtonComponent></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+@code {
+    private List<Doctor>? _doctors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _dbContext.Database.EnsureCreated();
+        _doctors = await _dbContext.Doctors.ToListAsync();
+    }
+
+    private Action OnDoctorClick(int doctorId) => () => NavManager.NavigateTo($"/orders/{doctorId}");
+}

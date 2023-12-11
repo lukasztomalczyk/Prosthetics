@@ -1,0 +1,33 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@using Prosthetics.Components.Enums
+
+@*ButtonComponent*@
+
+<RadzenButton Shade="Shade.Darker" Text="@Text" Click="@ButtonClicked" ButtonStyle="@Select()"></RadzenButton>
+
+@code {
+    [Parameter, AllowNull]
+    public string Text { get; set; }
+
+    [Parameter]
+    public Action OnActionClick { get; set; }
+
+    [Parameter, AllowNull]
+    public TypeOfButton Type { get; set; }
+
+    public ButtonComponent()
+    {
+
+    }
+
+    private void ButtonClicked()
+    {
+        OnActionClick?.Invoke();
+    }
+
+    private ButtonStyle Select()
+    {
+        return ButtonStyle.Light;
+    }
+
+}

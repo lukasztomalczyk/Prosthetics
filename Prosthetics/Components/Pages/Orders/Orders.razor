@@ -1,0 +1,68 @@
+﻿@page "/orders/{doctorId}"
+@using Microsoft.EntityFrameworkCore
+@using Prosthetics.Persistance
+@using Prosthetics.Persistance.Entities
+@inject ProstheticsDbContext dbContext
+
+<h3>Zlecenia dla lekarza: Łukasz Kowalski</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Typ zamówienia</th>
+      <th scope="col">Data zlecenia</th>
+      <th scope="col">Data końcowa</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+        @if (_orders != null)
+        {
+                @foreach (var order in _orders)
+                {
+                    <a data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        <tr>
+                            <td></td>
+                            <td>@order.Type</td>
+                            <td>@order.InsertedDate.ToString("dd.MM.yyyy")</td>
+                            <td>@order.DeadLine.ToString("dd.MM.yyyy")</td>
+                            <td>@GetStatus(order.Status)</td>
+                        </tr>
+                    </a>
+                }
+        }
+  </tbody>
+</table>
+
+
+<button type="button" class="btn btn-primary">Dodaj zlecenie</button>
+
+
+@code {
+    [Parameter]
+    public string DoctorId { get; set; }
+
+    private List<Order>? _orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dbContext.Database.EnsureCreated();
+        _orders = await dbContext.Orders.Where(_ => _.DoctorId == int.Parse(DoctorId)).ToListAsync();
+    }
+
+    private string GetStatus(int status)
+    {
+        switch (status)
+        {
+            case 1:
+                return "nowe";
+            case 2:
+                return "w przygotowaniu";
+            case 3:
+                return "wycofane";
+            default:
+                return "nowe";
+        }
+    }
+}
