@@ -1,7 +1,7 @@
 ﻿@page "/orders"
 
 @using MediatR
-@using Microsoft.EntityFrameworkCore
+@using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Grid
 @using Prosthetics.Features
@@ -9,6 +9,7 @@
 @using Prosthetics.Persistance
 @using Prosthetics.Persistance.Entities
 
+@inject NavigationManager _navManager
 @inject IMediator _mediator;
 @inject IStore _store;
 
@@ -16,8 +17,7 @@
 
 <GridComponent TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders" OnRowClickEvent="@(e => OnOrderClick(e))"></GridComponent>
 
-<button type="button" class="btn btn-primary">Dodaj zlecenie</button>
-
+<ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 @code {
     [Parameter]
@@ -39,8 +39,10 @@
 
     protected void OnOrderClick(OrderDto order)
     {
-        
+
     }
+
+    protected void OnAddButtonClicked() => _navManager.NavigateTo("/add-order");
 
     private string GetStatus(int status)
     {

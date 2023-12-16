@@ -1,8 +1,6 @@
 ﻿@using System.Diagnostics.CodeAnalysis
 @using Prosthetics.Components.Enums
 
-@*ButtonComponent*@
-
 <RadzenButton Shade="Shade.Darker" Text="@Text" Click="@ButtonClicked" Icon="@ChooseIcon()" ButtonStyle="@ChooseButtonStyle()"></RadzenButton>
 
 @code {
@@ -10,17 +8,14 @@
     public string Text { get; set; }
 
     [Parameter]
-    public Action OnActionClick { get; set; }
+    public EventCallback OnButtonClick { get; set; }
 
     [Parameter, AllowNull]
     public TypeOfButton Type { get; set; }
     [Parameter, AllowNull]
     public StyleOfButton Style { get; set; }
 
-    private void ButtonClicked()
-    {
-        OnActionClick?.Invoke();
-    }
+    void ButtonClicked() => this.OnButtonClick.InvokeAsync();
 
     private string ChooseIcon() 
     {

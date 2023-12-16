@@ -3,6 +3,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Prosthetics.Common;
 using Prosthetics.Features;
 using Prosthetics.Persistance;
 using System.Reflection;
@@ -30,6 +31,7 @@ namespace Prosthetics
             builder.Services.AddSingleton<IMapper>(mapperConfig);
 
             builder.Services.AddSingleton<IStore, Store>();
+            builder.Services.AddSingleton<IDateTime, DateTimeService>();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddDbContext<ProstheticsDbContext>
                 (o => o.UseInMemoryDatabase("MyDatabase"));
