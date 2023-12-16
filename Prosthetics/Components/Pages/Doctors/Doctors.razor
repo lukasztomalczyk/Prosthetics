@@ -1,47 +1,42 @@
 ﻿@page "/doctors"
+
+@using MediatR
 @using Microsoft.EntityFrameworkCore
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
+@using Prosthetics.Components.Models.Grid
+@using Prosthetics.Features
+@using Prosthetics.Features.Doctors
 @using Prosthetics.Persistance
 @using Prosthetics.Persistance.Entities
-@inject ProstheticsDbContext _dbContext
-@inject NavigationManager NavManager
+
+@inject NavigationManager _navManager
+@inject IMediator _mediator;
+@inject IStore _store;
 
 <h3>Wybierz lekarza</h3>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Imię i nazwisko</th>
-            <th scope="col">Akcja</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (_doctors != null)
-        {
-            @foreach (var doctor in _doctors)
-            {
-                <tr>
-                    <td></td>
-                    <td>@doctor.FirstName @doctor.LastName</td>
-                    <td><ButtonComponent Text="Zlecenia" OnActionClick="@OnDoctorClick(doctor.Id)" Type="TypeOfButton.PRIMARY"></ButtonComponent></td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
-
-
+<GridComponent TData="DoctorDto" ColumnsDefinition="@_columns" Data="@_doctors" OnRowClickEvent="@(e => OnDoctorClick(e))"></GridComponent>
 
 @code {
-    private List<Doctor>? _doctors;
+    private IEnumerable<DoctorDto>? _doctors;
+    private ColumnInfo[] _columns = new ColumnInfo[]
+    {
+        new ColumnInfo() { Title = "Imię i nazwisko", Property = "FullName" }
+    };
 
     protected override async Task OnInitializedAsync()
     {
-        _dbContext.Database.EnsureCreated();
-        _doctors = await _dbContext.Doctors.ToListAsync();
+        _doctors = await _mediator.Send(new GetDoctorsQuery());
+
+        await base.OnInitializedAsync();
     }
 
-    private Action OnDoctorClick(int doctorId) => () => NavManager.NavigateTo($"/orders/{doctorId}");
+    private void OnDoctorClick(DoctorDto doctor)
+    {
+        _store.Order.DoctorId = doctor.Id;
+        _store.Order.DoctorFullName = doctor.FullName;
+
+        _navManager.NavigateTo($"/orders");
+    }
 }

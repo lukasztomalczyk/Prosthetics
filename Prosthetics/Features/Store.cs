@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Prosthetics.Features
+﻿namespace Prosthetics.Features
 {
-    public class Store
+    public class Store : IStore
+    {
+        public OrderStore Order { get; set; } = new OrderStore();
+    }
+
+    public interface IStore
+    {
+        OrderStore Order { get; set; }
+    }
+
+    public class OrderStore
     {
         public int DoctorId { get; set; }
+        public string DoctorFullName { get; set; }
     }
 }

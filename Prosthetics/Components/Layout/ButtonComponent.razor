@@ -3,7 +3,7 @@
 
 @*ButtonComponent*@
 
-<RadzenButton Shade="Shade.Darker" Text="@Text" Click="@ButtonClicked" ButtonStyle="@Select()"></RadzenButton>
+<RadzenButton Shade="Shade.Darker" Text="@Text" Click="@ButtonClicked" Icon="@ChooseIcon()" ButtonStyle="@ChooseButtonStyle()"></RadzenButton>
 
 @code {
     [Parameter, AllowNull]
@@ -14,20 +14,46 @@
 
     [Parameter, AllowNull]
     public TypeOfButton Type { get; set; }
-
-    public ButtonComponent()
-    {
-
-    }
+    [Parameter, AllowNull]
+    public StyleOfButton Style { get; set; }
 
     private void ButtonClicked()
     {
         OnActionClick?.Invoke();
     }
 
-    private ButtonStyle Select()
+    private string ChooseIcon() 
     {
-        return ButtonStyle.Light;
+        switch (this.Style)
+        {
+            case StyleOfButton.DEFAULT:
+                return string.Empty;
+            case StyleOfButton.CIRCLE:
+                return "add_circle_outline";
+            default:
+                return string.Empty;
+        }
+    }
+
+    private ButtonStyle ChooseButtonStyle()
+    {
+        switch (this.Type)
+        {
+            case TypeOfButton.PRIMARY:
+                return ButtonStyle.Primary;
+            case TypeOfButton.SECONDARY:
+                return ButtonStyle.Secondary;
+            case TypeOfButton.SUCCESS:
+                return ButtonStyle.Success;
+            case TypeOfButton.WARNING:
+                return ButtonStyle.Warning;
+            case TypeOfButton.DANGER:
+                return ButtonStyle.Danger;
+            case TypeOfButton.INFO:
+                return ButtonStyle.Info;
+            default:
+                return ButtonStyle.Primary;
+        }
     }
 
 }

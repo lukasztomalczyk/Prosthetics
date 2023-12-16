@@ -1,0 +1,32 @@
+﻿@using Prosthetics.Components.Models.Grid
+@using System.Diagnostics.CodeAnalysis
+
+@typeparam TData
+
+<RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="true" PageSize="5" AllowSorting="true"
+                Data="@Data" TItem="TData" RowClick="OnRowClick">
+    <Columns>
+            @foreach(var column in ColumnsDefinition)
+            {
+                <RadzenDataGridColumn TItem="TData" Title="@column.Title" Property="@column.Property"></RadzenDataGridColumn>
+            }
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter]
+    public EventCallback<TData> OnRowClickEvent { get; set; }
+    [Parameter, AllowNull]
+    public IEnumerable<TData> Data { get; set; }
+    [Parameter, AllowNull]
+    public ColumnInfo[] ColumnsDefinition { get; set; }
+
+    RadzenDataGrid<TData> dataGrid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    void OnRowClick(DataGridRowMouseEventArgs<TData> param) => this.OnRowClickEvent.InvokeAsync(param.Data);
+}

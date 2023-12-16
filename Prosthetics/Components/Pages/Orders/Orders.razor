@@ -1,40 +1,20 @@
-﻿@page "/orders/{doctorId}"
+﻿@page "/orders"
+
+@using MediatR
 @using Microsoft.EntityFrameworkCore
+@using Prosthetics.Components.Layout
+@using Prosthetics.Components.Models.Grid
+@using Prosthetics.Features
+@using Prosthetics.Features.Orders
 @using Prosthetics.Persistance
 @using Prosthetics.Persistance.Entities
-@inject ProstheticsDbContext dbContext
 
-<h3>Zlecenia dla lekarza: Łukasz Kowalski</h3>
+@inject IMediator _mediator;
+@inject IStore _store;
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Typ zamówienia</th>
-      <th scope="col">Data zlecenia</th>
-      <th scope="col">Data końcowa</th>
-      <th scope="col">Status</th>
-    </tr>
-  </thead>
-  <tbody>
-        @if (_orders != null)
-        {
-                @foreach (var order in _orders)
-                {
-                    <a data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        <tr>
-                            <td></td>
-                            <td>@order.Type</td>
-                            <td>@order.InsertedDate.ToString("dd.MM.yyyy")</td>
-                            <td>@order.DeadLine.ToString("dd.MM.yyyy")</td>
-                            <td>@GetStatus(order.Status)</td>
-                        </tr>
-                    </a>
-                }
-        }
-  </tbody>
-</table>
+<h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
+<GridComponent TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders" OnRowClickEvent="@(e => OnOrderClick(e))"></GridComponent>
 
 <button type="button" class="btn btn-primary">Dodaj zlecenie</button>
 
@@ -43,12 +23,23 @@
     [Parameter]
     public string DoctorId { get; set; }
 
-    private List<Order>? _orders;
+    private IEnumerable<OrderDto>? _orders;
+    private ColumnInfo[] _columns = new ColumnInfo[]
+    {
+        new ColumnInfo() { Title = "Typ zamówienia", Property = "Type" },
+        new ColumnInfo() { Title = "Data zlecenia", Property = "OrderDate" },
+        new ColumnInfo() { Title = "Data końcowa", Property = "DeadLine" },
+        new ColumnInfo() { Title = "Status", Property = "Status" }
+    };
 
     protected override async Task OnInitializedAsync()
     {
-        dbContext.Database.EnsureCreated();
-        _orders = await dbContext.Orders.Where(_ => _.DoctorId == int.Parse(DoctorId)).ToListAsync();
+        _orders = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
+    }
+
+    protected void OnOrderClick(OrderDto order)
+    {
+        
     }
 
     private string GetStatus(int status)
