@@ -1,0 +1,27 @@
+﻿@using MediatR
+@using Prosthetics.Components.Layout
+
+@inject IMediator _mediator
+
+<RadzenTextArea @bind-Value=@Comments TValue="string" />
+<br />
+<ButtonComponent Text="Zapisz zmiany" OnButtonClick="@OnButtonClick"></ButtonComponent>
+
+
+@code {
+    [Parameter]
+    public string Comments { get; set; } = string.Empty;
+    [Parameter]
+    public EventCallback<bool> OnCloseEvent { get; set; } = new EventCallback<bool>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnButtonClick() 
+    {
+        await _mediator.Send(null);
+        OnCloseEvent.InvokeAsync(false);
+    }
+}

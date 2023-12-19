@@ -36,7 +36,7 @@ namespace Prosthetics.Features.Doctors
 
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<Doctor, DoctorDto>()
+            config.NewConfig<DoctorEntity, DoctorDto>()
                 .Map(dest => dest.FullName, src => $"{src.FirstName} {src.LastName}");
         }
     }

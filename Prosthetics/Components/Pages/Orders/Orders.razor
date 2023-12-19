@@ -19,30 +19,51 @@
 
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
+<DialogComponent TComponent="Comment" Title="Komentarz" Show="_showOrderComment" OnCloseEvent="@OnCloseDialog" ViewParameters="_viewParameters"></DialogComponent>
+
 @code {
     [Parameter]
     public string DoctorId { get; set; }
 
+    private Dictionary<string, object> _viewParameters;
     private IEnumerable<OrderDto>? _orders;
     private ColumnInfo[] _columns = new ColumnInfo[]
     {
-        new ColumnInfo() { Title = "Typ zamówienia", Property = "Type" },
         new ColumnInfo() { Title = "Data zlecenia", Property = "OrderDate" },
         new ColumnInfo() { Title = "Data końcowa", Property = "DeadLine" },
+        new ColumnInfo() { Title = "Typ zamówienia", Property = "Type" },
+        new ColumnInfo() { Title = "Dodatki", Property = "AdditionalWork" },
+        new ColumnInfo() { Title = "Komentarz", Property = "ShortComment" },
         new ColumnInfo() { Title = "Status", Property = "Status" }
     };
+    private bool _showOrderComment = false;
 
     protected override async Task OnInitializedAsync()
     {
-        _orders = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
+        var result = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
+        _orders = CutCommentLenght(result.ToList());
     }
 
-    protected void OnOrderClick(OrderDto order)
+    private void OnOrderClick(OrderDto order)
     {
-
+        _viewParameters = new Dictionary<string, object>() { { nameof(order.Comments), order.Comments } };
+        _showOrderComment = true;
     }
 
-    protected void OnAddButtonClicked() => _navManager.NavigateTo("/add-order");
+    private void OnCloseDialog(bool show) => _showOrderComment = show;
+
+    private void OnAddButtonClicked() => _navManager.NavigateTo("/add-order");
+
+    private IEnumerable<OrderDto> CutCommentLenght(List<OrderDto> list)
+    {
+        list.ForEach(_ =>
+        {
+            if (_.Comments?.Length > 10)
+                _.ShortComment = _.Comments.Substring(0, 10);
+        });
+
+        return list;
+    }
 
     private string GetStatus(int status)
     {

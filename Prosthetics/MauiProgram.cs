@@ -4,8 +4,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Prosthetics.Common;
+using Prosthetics.Extensions;
 using Prosthetics.Features;
 using Prosthetics.Persistance;
+using Radzen;
 using System.Reflection;
 
 namespace Prosthetics
@@ -29,6 +31,8 @@ namespace Prosthetics
             // register the mapper as Singleton service for my application
             var mapperConfig = new Mapper(typeAdapterConfig);
             builder.Services.AddSingleton<IMapper>(mapperConfig);
+
+            builder.Services.AddRadzenDependency();
 
             builder.Services.AddSingleton<IStore, Store>();
             builder.Services.AddSingleton<IDateTime, DateTimeService>();
