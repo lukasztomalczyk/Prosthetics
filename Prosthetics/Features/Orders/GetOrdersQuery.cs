@@ -34,7 +34,7 @@ namespace Prosthetics.Features.Orders
     public class OrderDto : IRegister
     {
         public int Id { get; set; }
-        public string Patient { get; set; }
+        public string PatientFullName { get; set; }
         public string OrderDate { get; set; }
         public string DeadLine { get; set; }
         public string Type { get; set; }
@@ -47,7 +47,7 @@ namespace Prosthetics.Features.Orders
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<Order, OrderDto>()
-                .Map(dest => dest.Patient, src => $"{src.Patient.LastName} {src.Patient.FirstName}")
+                .Map(dest => dest.PatientFullName, src => src.Patient == null ? string.Empty : $"{src.Patient.LastName} {src.Patient.FirstName}")
                 .Map(dest => dest.OrderDate, src => src.InsertedDate.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.DeadLine, src => src.DeadLine.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.Status, src => MapStatus(src.Status));

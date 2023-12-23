@@ -39,7 +39,8 @@ namespace Prosthetics
             builder.Services.AddSingleton<IDateTime, DateTimeService>();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddDbContext<ProstheticsDbContext>
-                (o => o.UseFileContextDatabase("MyDatabase"));
+                // (o => o.UseFileContextDatabase("MyDatabase"));
+                (o => o.UseInMemoryDatabase("MyDatabase"));
             builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

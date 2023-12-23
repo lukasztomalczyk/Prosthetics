@@ -1,0 +1,34 @@
+﻿@page "/add-patient"
+"
+@using Prosthetics.Components.Enums
+@using Prosthetics.Components.Layout
+@using Prosthetics.Features
+
+@inject IStore _store
+@inject NavigationManager _navManager
+
+<h3>Dodaj pacjenta</h3>
+<RadzenLabel Text="Imię" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenTextBox Placeholder="" @bind-Value=@_firstName class="w-100" aria-label="TextBox with placeholder" />
+<br />
+<RadzenLabel Text="Nazwisko" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenTextBox Placeholder="" @bind-Value=@_lastName class="w-100" aria-label="TextBox with placeholder" />
+<br />
+<br />
+<ButtonComponent Text="Anuluj" OnButtonClick="OnCancelClick"></ButtonComponent>
+<ButtonComponent Text="Dalej" OnButtonClick="OnNextClick" Type="TypeOfButton.SUCCESS"></ButtonComponent>
+
+@code {
+    private string? _firstName;
+    private string? _lastName;
+
+    protected void OnCancelClick() => _navManager.NavigateTo("/doctors");
+
+    protected void OnNextClick()
+    {
+        _store.Patient.FirstName = _firstName;
+        _store.Patient.LastName = _lastName;
+
+        _navManager.NavigateTo("/add-order");
+    }
+}

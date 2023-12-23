@@ -20,7 +20,7 @@ namespace Prosthetics.Persistance
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseFileContextDatabase(location: @".\database\");
+            //optionsBuilder.UseFileContextDatabase(location: @".\database\");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,6 +46,15 @@ namespace Prosthetics.Persistance
                         OrdersId = 1,
                     }
                     ));
+
+            modelBuilder.Entity<Patient>()
+                .HasData(
+                new Patient()
+                { 
+                    Id = 1,
+                    FirstName = "Krzysiek",
+                    LastName = "Kasprowicz"
+                });
 
             modelBuilder.Entity<OrderType>()
                 .HasData(
@@ -96,6 +105,7 @@ namespace Prosthetics.Persistance
                 {
                     Id = 1,
                     DoctorId = 1,
+                    PatientId = 1,
                     OrderTypeId = 1,
                     Status = OrderStatus.New,
                     InsertedDate = DateTime.Now,
@@ -106,6 +116,7 @@ namespace Prosthetics.Persistance
                 {
                     Id = 2,
                     DoctorId = 1,
+                    PatientId = 1,
                     OrderTypeId = 2,
                     Status = OrderStatus.Canceled,
                     InsertedDate = DateTime.Now.AddDays(1),
@@ -115,6 +126,7 @@ namespace Prosthetics.Persistance
                 {
                     Id = 3,
                     DoctorId = 1,
+                    PatientId = 1,
                     OrderTypeId = 3,
                     Status = OrderStatus.InProgress,
                     InsertedDate = DateTime.Now.AddDays(2),
@@ -124,6 +136,7 @@ namespace Prosthetics.Persistance
                 {
                     Id = 4,
                     DoctorId = 1,
+                    PatientId = 1,
                     OrderTypeId = 1,
                     Status = OrderStatus.Sent,
                     InsertedDate = DateTime.Now.AddDays(2),

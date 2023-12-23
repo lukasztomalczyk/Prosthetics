@@ -9,7 +9,8 @@ namespace Prosthetics.Features.Orders
     public class AddOrderCommand : IRequest, IRegister
     {
         public int DoctorId { get; set; }
-        public string Type { get; set; }
+        public int PatientId { get; set; }
+        public int OrderTypeId { get; set; }
         public DateTime DeadLine { get; set; }
 
         public void Register(TypeAdapterConfig config)

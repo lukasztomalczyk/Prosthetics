@@ -16,7 +16,7 @@
 <h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
 <GridComponent TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders" OnRowClickEvent="@(e => OnOrderClick(e))"></GridComponent>
-
+<br />
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 <DialogComponent TComponent="Comment" Title="Szczegóły zamówienia" Show="_showOrderComment" OnCloseEvent="@OnCloseDialog" ViewParameters="_viewParameters"></DialogComponent>
@@ -29,7 +29,7 @@
     private IEnumerable<OrderDto>? _orders;
     private ColumnInfo<OrderDto>[] _columns = new ColumnInfo<OrderDto>[]
     {   
-        new ColumnInfo<OrderDto> { Title = "Pacjent", Property = "Patient" },
+        new ColumnInfo<OrderDto> { Title = "Pacjent", Property = "PatientFullName" },
         new ColumnInfo<OrderDto> { Title = "Typ zamówienia", Property = "Type" },
         new ColumnInfo<OrderDto> { Title = "Ilość dodatków", Property = "AdditionalWorksCount" },
         new ColumnInfo<OrderDto> { Title = "Dodatki", Property = "AdditionalWorks", Hide = true },
@@ -63,7 +63,7 @@
         _navManager.NavigateTo("/orders", true);
     }
 
-    private void OnAddButtonClicked() => _navManager.NavigateTo("/add-order");
+    private void OnAddButtonClicked() => _navManager.NavigateTo("/add-patient");
 
     private IEnumerable<OrderDto> TransformData(List<OrderDto> list)
     {

@@ -5,6 +5,7 @@
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
 @using Prosthetics.Features.Orders
+@using Prosthetics.Features.Patients
 
 @inject NavigationManager _navManager
 @inject IMediator _mediator;
@@ -14,37 +15,43 @@
 <h3>Dodaj zamówienie</h3>
 
 <RadzenLabel Text="Wybierz..." Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
-<RadzenDropDown @bind-Value=@_selectedType Data=@_types Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
+<RadzenDropDown @bind-Value=@_orderTypeId Data=@_types ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
 <br />
 <RadzenLabel Text="Wybierz datę końcową" Component="DatePickerHourFormat" Style="margin-right: 8px; vertical-align: middle;" />
 <RadzenDatePicker @bind-Value=@_selectedDeadLine ShowTime="false" DateFormat="dd-MM-yyyy" Name="DatePickerHourFormat" />
 <br />
+<br />
 <ButtonComponent Text="Dodaj" OnButtonClick="AddOrderAsync"></ButtonComponent>
 
 @code {
-    private string _selectedType;
+    private int _orderTypeId;
     private DateTime _selectedDeadLine;
-    private IEnumerable<string> _types = new string[]
-    {
-        "MD", "Type 1", "Type 2", "Type 3"    
-    };
-        
+    private IEnumerable<OrderTypeDto> _types;
+
     protected DateTime GetTimeNow() => _dateTime.Now();
 
     protected override async Task OnInitializedAsync()
     {
         _selectedDeadLine = _dateTime.Now();
+        _types = await _mediator.Send(new GetOrderTypesQuery());
 
         await base.OnInitializedAsync();
     }
 
     protected async Task AddOrderAsync()
     {
+        var patientId = await _mediator.Send(new AddPatientCommand()
+        {
+            FirstName =  _store.Patient.FirstName,
+            LastName = _store.Patient.LastName
+        });
+
         await _mediator.Send(new AddOrderCommand()
         {
+            PatientId = patientId,
             DeadLine = _selectedDeadLine,
             DoctorId = _store.Order.DoctorId,
-                Type = _selectedType
+            OrderTypeId = _orderTypeId
         });
 
         Thread.Sleep(100);
