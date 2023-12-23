@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FileContextCore;
+using Microsoft.EntityFrameworkCore;
 using Prosthetics.Models;
 using Prosthetics.Persistance.Entities;
 
@@ -15,6 +16,11 @@ namespace Prosthetics.Persistance
         public ProstheticsDbContext(DbContextOptions<ProstheticsDbContext> options) 
             : base(options)
         { 
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseFileContextDatabase(location: @".\database\");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

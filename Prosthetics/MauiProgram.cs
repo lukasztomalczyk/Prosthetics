@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using FileContextCore;
+using Mapster;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ namespace Prosthetics
             builder.Services.AddSingleton<IDateTime, DateTimeService>();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddDbContext<ProstheticsDbContext>
-                (o => o.UseInMemoryDatabase("MyDatabase"));
+                (o => o.UseFileContextDatabase("MyDatabase"));
             builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
