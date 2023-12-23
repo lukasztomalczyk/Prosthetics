@@ -1,18 +1,38 @@
 ﻿@using MediatR
 @using Prosthetics.Components.Layout
+@using Prosthetics.Features
+@using Prosthetics.Features.Orders
 
 @inject IMediator _mediator
+@inject IStore _store;
 
-<RadzenTextArea @bind-Value=@Comments TValue="string" />
+<h3>Dodatkowe zadania:</h3>
+<ul class="list-group">
+    @foreach (var item in AdditionalWorks)
+    {
+        <li class="list-group-item">@item</li>
+    }
+</ul
 <br />
-<ButtonComponent Text="Zapisz zmiany" OnButtonClick="@OnButtonClick"></ButtonComponent>
-
+<h3>Komentarz:</h3>
+<RadzenTextArea @bind-Value=@Comments TValue="string" Disabled="_disableTextArea" Rows="3" Cols="90" />
+<br />
+<ButtonComponent Text="@_buttonText" OnButtonClick="@OnButtonClick"></ButtonComponent>
 
 @code {
+    [Parameter]
+    public IEnumerable<string> AdditionalWorks { get; set; }
     [Parameter]
     public string Comments { get; set; } = string.Empty;
     [Parameter]
     public EventCallback<bool> OnCloseEvent { get; set; } = new EventCallback<bool>();
+
+    private bool _disableTextArea = true;
+    private string _buttonText = "Edytuj";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -21,7 +41,19 @@
 
     private async Task OnButtonClick() 
     {
-        await _mediator.Send(null);
-        OnCloseEvent.InvokeAsync(false);
+        if (_buttonText == "Edytuj")
+        {
+            _buttonText = "Zapisz zmiany";
+            _disableTextArea = false;
+        } 
+        else
+        {
+            await _mediator.Send(new EditOrderCommand() 
+            { 
+                Comments = this.Comments,
+                OrderId = _store.Order.OrderId
+            });
+            await OnCloseEvent.InvokeAsync(false);
+        }
     }
 }

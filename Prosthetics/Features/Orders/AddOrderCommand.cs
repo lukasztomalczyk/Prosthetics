@@ -14,7 +14,7 @@ namespace Prosthetics.Features.Orders
 
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<AddOrderCommand, OrderEntity>()
+            config.NewConfig<AddOrderCommand, Order>()
                 .Map(dest => dest.Status, src => 1);
         }
     }
@@ -32,7 +32,7 @@ namespace Prosthetics.Features.Orders
 
         public async Task<Unit> Handle(AddOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = request.Adapt<OrderEntity>();
+            var order = request.Adapt<Order>();
 
             order.InsertedDate = _dateTime.Now();
 

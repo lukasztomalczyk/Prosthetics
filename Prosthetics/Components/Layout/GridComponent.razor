@@ -8,7 +8,18 @@
     <Columns>
             @foreach(var column in ColumnsDefinition)
             {
-                <RadzenDataGridColumn TItem="TData" Title="@column.Title" Property="@column.Property"></RadzenDataGridColumn>
+                @if (column.IsCustomDisplay)
+                {
+                    <RadzenDataGridColumn TItem="TData" Title="@column.Title" Property="@column.Property" Visible="@(!column.Hide)">
+                        <Template Context="order">
+                            @column.DisplayAction(order)
+                        </Template>
+                    </RadzenDataGridColumn>
+                }
+                else
+                {
+                     <RadzenDataGridColumn TItem="TData" Title="@column.Title" Property="@column.Property" Visible="@(!column.Hide)"></RadzenDataGridColumn>
+                }
             }
     </Columns>
 </RadzenDataGrid>
@@ -19,7 +30,7 @@
     [Parameter, AllowNull]
     public IEnumerable<TData> Data { get; set; }
     [Parameter, AllowNull]
-    public ColumnInfo[] ColumnsDefinition { get; set; }
+    public ColumnInfo<TData>[] ColumnsDefinition { get; set; }
 
     RadzenDataGrid<TData> dataGrid;
 

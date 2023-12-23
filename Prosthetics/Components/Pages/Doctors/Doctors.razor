@@ -20,9 +20,9 @@
 
 @code {
     private IEnumerable<DoctorDto>? _doctors;
-    private ColumnInfo[] _columns = new ColumnInfo[]
+    private ColumnInfo<DoctorDto>[] _columns = new ColumnInfo<DoctorDto>[]
     {
-        new ColumnInfo() { Title = "Imię i nazwisko", Property = "FullName" }
+        new ColumnInfo<DoctorDto> { Title = "Imię i nazwisko", Property = "FullName" }
     };
 
     protected override async Task OnInitializedAsync()

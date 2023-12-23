@@ -19,7 +19,7 @@
 
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
-<DialogComponent TComponent="Comment" Title="Komentarz" Show="_showOrderComment" OnCloseEvent="@OnCloseDialog" ViewParameters="_viewParameters"></DialogComponent>
+<DialogComponent TComponent="Comment" Title="Szczegóły zamówienia" Show="_showOrderComment" OnCloseEvent="@OnCloseDialog" ViewParameters="_viewParameters"></DialogComponent>
 
 @code {
     [Parameter]
@@ -27,37 +27,49 @@
 
     private Dictionary<string, object> _viewParameters;
     private IEnumerable<OrderDto>? _orders;
-    private ColumnInfo[] _columns = new ColumnInfo[]
-    {
-        new ColumnInfo() { Title = "Data zlecenia", Property = "OrderDate" },
-        new ColumnInfo() { Title = "Data końcowa", Property = "DeadLine" },
-        new ColumnInfo() { Title = "Typ zamówienia", Property = "Type" },
-        new ColumnInfo() { Title = "Dodatki", Property = "AdditionalWork" },
-        new ColumnInfo() { Title = "Komentarz", Property = "ShortComment" },
-        new ColumnInfo() { Title = "Status", Property = "Status" }
+    private ColumnInfo<OrderDto>[] _columns = new ColumnInfo<OrderDto>[]
+    {   
+        new ColumnInfo<OrderDto> { Title = "Pacjent", Property = "Patient" },
+        new ColumnInfo<OrderDto> { Title = "Typ zamówienia", Property = "Type" },
+        new ColumnInfo<OrderDto> { Title = "Ilość dodatków", Property = "AdditionalWorksCount" },
+        new ColumnInfo<OrderDto> { Title = "Dodatki", Property = "AdditionalWorks", Hide = true },
+        new ColumnInfo<OrderDto> { Title = "Komentarz", Property = "ShortComment" },
+        new ColumnInfo<OrderDto> { Title = "Data zlecenia", Property = "OrderDate" },
+        new ColumnInfo<OrderDto> { Title = "Data końcowa", Property = "DeadLine" },
+        new ColumnInfo<OrderDto> { Title = "Status", Property = "Status" }
     };
     private bool _showOrderComment = false;
 
     protected override async Task OnInitializedAsync()
     {
         var result = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
-        _orders = CutCommentLenght(result.ToList());
+        _orders = TransformData(result.ToList());
     }
 
     private void OnOrderClick(OrderDto order)
     {
-        _viewParameters = new Dictionary<string, object>() { { nameof(order.Comments), order.Comments } };
+        _viewParameters = new Dictionary<string, object>()
+        { 
+            { nameof(order.AdditionalWorks), order.AdditionalWorks.Select(_ => _.Name) },
+            { nameof(order.Comments), order.Comments }
+        };
+        _store.Order.OrderId = order.Id;
         _showOrderComment = true;
     }
 
-    private void OnCloseDialog(bool show) => _showOrderComment = show;
+    private void OnCloseDialog(bool show) 
+    {
+        _showOrderComment = show;
+        _navManager.NavigateTo("/orders", true);
+    }
 
     private void OnAddButtonClicked() => _navManager.NavigateTo("/add-order");
 
-    private IEnumerable<OrderDto> CutCommentLenght(List<OrderDto> list)
+    private IEnumerable<OrderDto> TransformData(List<OrderDto> list)
     {
         list.ForEach(_ =>
         {
+            _.AdditionalWorksCount = _.AdditionalWorks.Count();
             if (_.Comments?.Length > 10)
                 _.ShortComment = _.Comments.Substring(0, 10);
         });

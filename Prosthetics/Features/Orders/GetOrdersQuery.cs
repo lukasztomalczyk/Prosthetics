@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Prosthetics.Models;
 using Prosthetics.Persistance;
 using Prosthetics.Persistance.Entities;
 
@@ -22,7 +23,9 @@ namespace Prosthetics.Features.Orders
 
         public async Task<IEnumerable<OrderDto>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
         {
-            var result = await _dbContext.Orders.Include(_ => _.AdditionalWorks).Where(_ => _.DoctorId == request.DoctorId).ToListAsync();
+            var result = await _dbContext.Orders
+                .Include(_ => _.AdditionalWorks).Include(_ => _.Patient).Include(_ => _.OrderType)
+                .Where(_ => _.DoctorId == request.DoctorId).ToListAsync();
 
             return result.Adapt<IEnumerable<OrderDto>>();
         }
@@ -30,34 +33,40 @@ namespace Prosthetics.Features.Orders
 
     public class OrderDto : IRegister
     {
+        public int Id { get; set; }
+        public string Patient { get; set; }
         public string OrderDate { get; set; }
         public string DeadLine { get; set; }
         public string Type { get; set; }
         public List<AdditionalWorkDto> AdditionalWorks { get; set; }
+        public int AdditionalWorksCount { get; set; }
         public string Comments { get; set; }
         public string ShortComment { get; set; }
         public string Status { get; set; }
 
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<OrderEntity, OrderDto>()
+            config.NewConfig<Order, OrderDto>()
+                .Map(dest => dest.Patient, src => $"{src.Patient.LastName} {src.Patient.FirstName}")
                 .Map(dest => dest.OrderDate, src => src.InsertedDate.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.DeadLine, src => src.DeadLine.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.Status, src => MapStatus(src.Status));
         }
 
-        public static string MapStatus(int status)
+        public static string MapStatus(OrderStatus status)
         {
             switch (status)
             {
-                case 1:
-                    return "nowe";
-                case 2:
-                    return "w przygotowaniu";
-                case 3:
-                    return "wycofane";
+                case OrderStatus.New:
+                    return "Nowe";
+                case OrderStatus.InProgress:
+                    return "W przygotowaniu";
+                case OrderStatus.Canceled:
+                    return "Anulowane";
+                case OrderStatus.Sent:
+                    return "Wysłane";
                 default:
-                    return "nowe";
+                    return "Nowe";
             }
         }
     }
@@ -69,7 +78,7 @@ namespace Prosthetics.Features.Orders
 
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<AdditionalWorkEntity, AdditionalWorkDto>();
+            config.NewConfig<AdditionalWork, AdditionalWorkDto>();
         }
     }
 }
