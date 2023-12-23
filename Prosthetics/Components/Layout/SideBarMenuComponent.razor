@@ -1,0 +1,21 @@
+﻿@using Prosthetics.Components.Models.Menu
+
+@inject NavigationManager _navManager
+
+<RadzenPanelMenu>
+    @foreach (var item in MenuList)
+    {
+        <RadzenPanelMenuItem Text="@item.Text" Icon="@item.Icon" Click="@(args => OnMenuItemClick(item))" />
+    }
+</RadzenPanelMenu>
+
+@code {
+    [Parameter]
+    public IEnumerable<SideBarMenuInfo> MenuList { get; set; } = new List<SideBarMenuInfo>();
+
+    protected void OnMenuItemClick(SideBarMenuInfo item)
+    {
+        if (item.PageUrl != null)
+            _navManager.NavigateTo(item.PageUrl);
+    }
+}
