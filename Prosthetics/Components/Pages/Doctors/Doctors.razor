@@ -17,6 +17,9 @@
 <h3>Wybierz lekarza</h3>
 
 <GridComponent TData="DoctorDto" ColumnsDefinition="@_columns" Data="@_doctors" OnRowClickEvent="@(e => OnDoctorClick(e))"></GridComponent>
+<br />
+
+<ButtonComponent Text="Dodaj lekarza" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 @code {
     private IEnumerable<DoctorDto>? _doctors;
@@ -39,4 +42,6 @@
 
         _navManager.NavigateTo($"/orders");
     }
+
+    private void OnAddButtonClicked() => _navManager.NavigateTo("/add-doctor");
 }

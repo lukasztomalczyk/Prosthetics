@@ -1,4 +1,6 @@
-﻿using FileContextCore;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Storage;
+using FileContextCore;
 using Mapster;
 using MapsterMapper;
 using MediatR;
@@ -9,6 +11,7 @@ using Prosthetics.Extensions;
 using Prosthetics.Features;
 using Prosthetics.Persistance;
 using Radzen;
+using Radzen.Blazor;
 using System.Reflection;
 
 namespace Prosthetics
@@ -20,6 +23,7 @@ namespace Prosthetics
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -33,10 +37,14 @@ namespace Prosthetics
             var mapperConfig = new Mapper(typeAdapterConfig);
             builder.Services.AddSingleton<IMapper>(mapperConfig);
 
+            // Radzen
             builder.Services.AddRadzenDependency();
 
+
+            builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
             builder.Services.AddSingleton<IStore, Store>();
             builder.Services.AddSingleton<IDateTime, DateTimeService>();
+            builder.Services.AddSingleton<IExcelExporter, ExcelExporter>();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddDbContext<ProstheticsDbContext>
                 // (o => o.UseFileContextDatabase("MyDatabase"));

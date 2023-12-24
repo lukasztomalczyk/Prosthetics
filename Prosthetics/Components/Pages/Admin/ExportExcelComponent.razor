@@ -1,0 +1,63 @@
+﻿@page "/export-excel"
+
+@using System.Text
+@using CommunityToolkit.Maui.Alerts
+@using CommunityToolkit.Maui.Storage
+@using MediatR
+@using Prosthetics.Common
+@using Prosthetics.Components.Layout
+@using Prosthetics.Features.Admin
+
+@inject IFileSaver _fileServer
+@inject IExcelExporter _excelExporter
+@inject IMediator _mediator
+@inject IDateTime _dateTime
+
+<RadzenLabel Text="Wybierz zakres generowane raportu:" Component="DatePickerHourFormat" Style="margin-right: 8px; vertical-align: middle;" />
+od:
+<RadzenDatePicker @bind-Value=@_from ShowTime="false" DateFormat="dd-MM-yyyy" Name="DatePickerHourFormat" />
+do:
+<RadzenDatePicker @bind-Value=@_to ShowTime="false" DateFormat="dd-MM-yyyy" Name="DatePickerHourFormat" />
+<br />
+<ButtonComponent Text="Pobierz raport" OnButtonClick="@GenerateReport"></ButtonComponent>
+
+@code {
+    private DateTime _from { get; set; }
+
+    private DateTime _to { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var today = _dateTime.Now();
+        _to = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month));
+        _from = new DateTime(today.Year, today.Month, 1);
+    }
+
+    protected async Task GenerateReport()
+    {
+        var result = await _mediator.Send(new GetOrdersByDateRangeQuery()
+        {
+            From = _from,
+            To = _to
+        });
+
+        _excelExporter.AddWorksheet($"Raport_{_from.ToString("dd-MM-yyyy")}-{_to.ToString("dd-MM-yyyy")}");
+        _excelExporter.SetData(_ =>
+        {
+            _.Cell("A1").Value = "Hello World!";
+            _.Cell(1, 1).Value = "Hello World!";
+        });
+        await SaveFile();
+    }
+
+    protected async Task SaveFile()
+    {
+        using var stream = new MemoryStream();
+        _excelExporter.SaveFile(stream);
+        var fileSaverResult = await _fileServer.SaveAsync(
+            $"Raport_{_from.ToString("dd-MM-yyyy")}-{_to.ToString("dd-MM-yyyy")}.xlxs", stream);
+        fileSaverResult.EnsureSuccess();
+
+        await Toast.Make($"Plik zapisano: {fileSaverResult.FilePath}").Show();
+    }
+}

@@ -24,7 +24,7 @@
 <ButtonComponent Text="Dodaj" OnButtonClick="AddOrderAsync"></ButtonComponent>
 
 @code {
-    private int _orderTypeId;
+    private int _orderTypeId = 1;
     private DateTime _selectedDeadLine;
     private IEnumerable<OrderTypeDto> _types;
 

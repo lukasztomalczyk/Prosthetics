@@ -1,7 +1,7 @@
 ﻿@using Prosthetics.Components.Models.Menu
 @inherits LayoutComponentBase
 
-<RadzenDialog />
+<RadzenComponents />
 
 <RadzenLayout>
     <RadzenHeader>
@@ -19,7 +19,7 @@
         </div>
     </RadzenBody>
     <RadzenFooter>
-        &#x24D2; <a href="http://juniordevops.pl" target="_blank">JuniorDevOps.pl</a>
+        &#x24D2; <a href="https://juniordevops.pl" target="_blank">JuniorDevOps.pl</a>
     </RadzenFooter>
 </RadzenLayout>
 
@@ -27,7 +27,8 @@
     private bool sidebar1Expanded = true;
     private IEnumerable<SideBarMenuInfo> _menuList = new List<SideBarMenuInfo>()
     {
-        new SideBarMenuInfo() { Text = "Lekarze", PageUrl = "/doctors", Icon = "account_box" }
+        new SideBarMenuInfo() { Text = "Lekarze", PageUrl = "/doctors", Icon = "account_box" },
+        new SideBarMenuInfo() { Text = "Admin", PageUrl = "/export-excel", Icon = "assignment_ind" }
     };
 
 }

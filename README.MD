@@ -1,0 +1,1 @@
+adb pull "/sdcard/Download/Raport_01-12-2023-31-12-2023.xlxs" "C:\temp\Raport_01-12-2023-31-12-2023.xlxs"

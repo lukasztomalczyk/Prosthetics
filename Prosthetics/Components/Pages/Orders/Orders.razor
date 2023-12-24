@@ -42,6 +42,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // TODO Wywołuje się za każdym razem po wejściu na stronę
+        // Inny lifehook
         var result = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
         _orders = TransformData(result.ToList());
     }

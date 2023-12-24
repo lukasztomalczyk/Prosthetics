@@ -5,6 +5,7 @@
 
 @inject IMediator _mediator
 @inject IStore _store;
+@inject NotificationService _notificationService
 
 <h3>Dodatkowe zadania:</h3>
 <ul class="list-group">
@@ -15,7 +16,7 @@
 </ul>
 <br />
 <h3>Komentarz:</h3>
-<RadzenTextArea @bind-Value=@Comments TValue="string" Disabled="_disableTextArea" Rows="3" Cols="70" />
+<RadzenTextArea @bind-Value=@Comments TValue="string" Disabled="_disableTextArea" Rows="3" Cols="40" />
 <br />
 <ButtonComponent Text="@_buttonText" OnButtonClick="@OnButtonClick"></ButtonComponent>
 
@@ -53,6 +54,12 @@
                 Comments = this.Comments,
                 OrderId = _store.Order.OrderId
             });
+            _notificationService.Notify(new NotificationMessage()
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Komentarz zapisany",
+                    Duration = 4000
+                });
             await OnCloseEvent.InvokeAsync(false);
         }
     }

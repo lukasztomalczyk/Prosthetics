@@ -50,7 +50,8 @@ namespace Prosthetics.Features.Orders
                 .Map(dest => dest.PatientFullName, src => src.Patient == null ? string.Empty : $"{src.Patient.LastName} {src.Patient.FirstName}")
                 .Map(dest => dest.OrderDate, src => src.InsertedDate.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.DeadLine, src => src.DeadLine.ToString("dd-MM-yyyy"))
-                .Map(dest => dest.Status, src => MapStatus(src.Status));
+                .Map(dest => dest.Status, src => MapStatus(src.Status))
+                .Map(dest => dest.Type, src => src.OrderType != null ? src.OrderType.Name : string.Empty);
         }
 
         public static string MapStatus(OrderStatus status)

@@ -1,14 +1,17 @@
-﻿@page "/add-patient"
+﻿@page "/add-doctor"
 
+@using MediatR
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
+@using Prosthetics.Features.Doctors
 
 @inject IStore _store
+@inject IMediator _mediator
 @inject NavigationManager _navManager
 @inject NotificationService _notificationService
 
-<h3>Dodaj pacjenta</h3>
+<h3>Dodaj lekarza</h3>
 <RadzenLabel Text="Imię" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
 <RadzenTextBox Placeholder="" @bind-Value=@_firstName class="w-100" aria-label="TextBox with placeholder" />
 <br />
@@ -17,25 +20,27 @@
 <br />
 <br />
 <ButtonComponent Text="Anuluj" OnButtonClick="OnCancelClick"></ButtonComponent>
-<ButtonComponent Text="Dalej" OnButtonClick="OnNextClick" Type="TypeOfButton.SUCCESS"></ButtonComponent>
+<ButtonComponent Text="Dalej" OnButtonClick="OnAddButtonClick" Type="TypeOfButton.SUCCESS"></ButtonComponent>
 
 @code {
     private string? _firstName;
     private string? _lastName;
 
-    protected void OnCancelClick() => _navManager.NavigateTo("/orders");
+    protected void OnCancelClick() => _navManager.NavigateTo("/doctors");
 
-    protected void OnNextClick()
+    protected async Task OnAddButtonClick()
     {
-        _store.Patient.FirstName = _firstName;
-        _store.Patient.LastName = _lastName;
-
+        await _mediator.Send(new AddDoctorCommand()
+        {
+            FirstName = _firstName,
+            LastName = _lastName
+        });
         _notificationService.Notify(new NotificationMessage()
-            {
-                Severity = NotificationSeverity.Success,
-                Summary = "Pacjent utworzony poprawnie",
-                Duration = 4000
-            });
-        _navManager.NavigateTo("/add-order");
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = "Lekarz utworzony poprawnie",
+            Duration = 4000
+        });
+        _navManager.NavigateTo("/doctors");
     }
 }
