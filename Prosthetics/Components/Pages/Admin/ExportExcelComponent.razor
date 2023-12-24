@@ -12,6 +12,7 @@
 @inject IExcelExporter _excelExporter
 @inject IMediator _mediator
 @inject IDateTime _dateTime
+@inject NotificationService _notificationService
 
 <RadzenLabel Text="Wybierz zakres generowane raportu:" Component="DatePickerHourFormat" Style="margin-right: 8px; vertical-align: middle;" />
 od:
@@ -40,12 +41,11 @@ do:
             From = _from,
             To = _to
         });
-
+        _excelExporter.New();
         _excelExporter.AddWorksheet($"Raport_{_from.ToString("dd-MM-yyyy")}-{_to.ToString("dd-MM-yyyy")}");
         _excelExporter.SetData(_ =>
         {
-            _.Cell("A1").Value = "Hello World!";
-            _.Cell(1, 1).Value = "Hello World!";
+            new ExcelDefinition(_, result).AddHeaders().AddRows();
         });
         await SaveFile();
     }
@@ -55,9 +55,14 @@ do:
         using var stream = new MemoryStream();
         _excelExporter.SaveFile(stream);
         var fileSaverResult = await _fileServer.SaveAsync(
-            $"Raport_{_from.ToString("dd-MM-yyyy")}-{_to.ToString("dd-MM-yyyy")}.xlxs", stream);
+            $"Raport_{_from.ToString("dd-MM-yyyy")}-{_to.ToString("dd-MM-yyyy")}.xlsx", stream);
         fileSaverResult.EnsureSuccess();
 
-        await Toast.Make($"Plik zapisano: {fileSaverResult.FilePath}").Show();
+        _notificationService.Notify(new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+                Summary = $"Plik zapisano: {fileSaverResult.FilePath}",
+            Duration = 4000
+        });
     }
 }

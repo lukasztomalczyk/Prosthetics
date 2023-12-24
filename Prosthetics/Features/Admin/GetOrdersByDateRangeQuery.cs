@@ -25,7 +25,9 @@ namespace Prosthetics.Features.Admin
         {
             var result = await _dbContext.Orders
                 .Include(_ => _.AdditionalWorks).Include(_ => _.OrderType).Include(_ => _.Patient)
-                .Where(_ => _.InsertedDate <= request.From && _.InsertedDate <= request.To).ToListAsync();
+                // TODO odkomentować
+                //.Where(_ => _.InsertedDate <= request.From && _.InsertedDate <= request.To)
+                .ToListAsync();
 
             return result.Adapt<IEnumerable<OrderByRangeDto>>();
         }
@@ -43,6 +45,7 @@ namespace Prosthetics.Features.Admin
                 .Map(dest => dest.PatientFullName, src => src.Patient != null 
                     ? $"{src.Patient.LastName} {src.Patient.FirstName}" : string.Empty)
                 .Map(dest => dest.AdditionalWorks, src => src.AdditionalWorks)
+                .Map(dest => dest.Type, src => src.OrderType != null ? src.OrderType.Name : string.Empty)
                 .PreserveReference(true);
         }
     }
