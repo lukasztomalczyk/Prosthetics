@@ -1,4 +1,7 @@
-﻿using Radzen;
+﻿using Mapster;
+using MapsterMapper;
+using Radzen;
+using System.Reflection;
 
 namespace Prosthetics.Extensions
 {
@@ -10,6 +13,17 @@ namespace Prosthetics.Extensions
             services.AddScoped<NotificationService>();
             services.AddScoped<ContextMenuService>();
             services.AddScoped<TooltipService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddMapster(this IServiceCollection services)
+        {
+            var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
+            typeAdapterConfig.Scan(Assembly.GetExecutingAssembly());
+            var mapperConfig = new Mapper(typeAdapterConfig);
+
+            services.AddSingleton<IMapper>(mapperConfig);
 
             return services;
         }

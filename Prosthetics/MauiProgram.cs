@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using FileContextCore;
-using Mapster;
-using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,9 +8,6 @@ using Prosthetics.Common;
 using Prosthetics.Extensions;
 using Prosthetics.Features;
 using Prosthetics.Persistance;
-using Radzen;
-using Radzen.Blazor;
-using System.Reflection;
 
 namespace Prosthetics
 {
@@ -29,17 +24,11 @@ namespace Prosthetics
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
-            // Mapster
-            var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
-            // scans the assembly and gets the IRegister, adding the registration to the TypeAdapterConfig
-            typeAdapterConfig.Scan(Assembly.GetExecutingAssembly());
-            // register the mapper as Singleton service for my application
-            var mapperConfig = new Mapper(typeAdapterConfig);
-            builder.Services.AddSingleton<IMapper>(mapperConfig);
-
-            // Radzen
+            builder.Services.AddMapster();
             builder.Services.AddRadzenDependency();
-
+            builder.Services.AddHttpClient();
+            builder.Services.AddSingleton<IJsonConverter, JsonConverter>();
+            builder.Services.AddSingleton<IHttpRequestExecutor, HttpRequestExecutor>();
 
             builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
             builder.Services.AddSingleton<IStore, Store>();
@@ -48,8 +37,14 @@ namespace Prosthetics
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddDbContext<ProstheticsDbContext>
                 // (o => o.UseFileContextDatabase("MyDatabase"));
-                (o => o.UseInMemoryDatabase("MyDatabase"));
-            builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
+                // (o => o.UseInMemoryDatabase("MyDatabase"));
+                (o =>
+                {
+                    o.UseSqlite("Filename=" + Path.Combine(FileSystem.Current.CacheDirectory, $"LocalDatabase-{AppInfo.Current.BuildString}.db"));
+                    o.EnableSensitiveDataLogging(true);
+                });
+
+        builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
