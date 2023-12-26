@@ -20,32 +20,36 @@ namespace Prosthetics.Persistance
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseFileContextDatabase(location: @".\database\");
+            // TODO mozna wybrać lokaloizacje optionsBuilder.UseFileContextDatabase(location: @".\database\");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Order>()
                 .Property(_ => _.Status)
                 .HasConversion<int>();
 
             modelBuilder.Entity<Order>()
                 .HasMany(_ => _.AdditionalWorks)
-                .WithMany(_ => _.Orders)
-                .UsingEntity(_ => _.HasData(
-                    new AdditionalWorkOrder()
-                    {
-                        Id = 1,
-                        AdditionalWorksId = 1,
-                        OrdersId = 1,
-                    },
-                    new AdditionalWorkOrder()
-                    {
-                        Id = 2,
-                        AdditionalWorksId = 2,
-                        OrdersId = 1,
-                    }
-                    ));
+                .WithMany(_ => _.Orders);
+
+            //modelBuilder.Entity<AdditionalWorkOrder>()
+            //    .Property(_ => _.OrdersId)
+            //    .is
+
+            //modelBuilder.Entity<Order>()
+            //    .HasMany(_ => _.AdditionalWorks)
+            //    .WithMany(_ => _.Orders)
+            //    .UsingEntity(_ => _.HasData(
+            //        new AdditionalWorkOrder()
+            //        {
+            //            Id = 1,
+            //            AdditionalWorksId = 1,
+            //            OrdersId = 1,
+            //        }
+            //        ));
 
             modelBuilder.Entity<Patient>()
                 .HasData(

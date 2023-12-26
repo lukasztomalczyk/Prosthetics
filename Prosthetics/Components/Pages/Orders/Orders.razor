@@ -74,6 +74,8 @@
             _.AdditionalWorksCount = _.AdditionalWorks.Count();
             if (_.Comments?.Length > 10)
                 _.ShortComment = _.Comments.Substring(0, 10);
+            else
+                _.ShortComment = _.Comments;
         });
 
         return list;

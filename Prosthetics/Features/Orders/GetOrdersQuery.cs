@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Prosthetics.Features.AdditionalWorks;
 using Prosthetics.Models;
 using Prosthetics.Persistance;
 using Prosthetics.Persistance.Entities;
@@ -34,15 +35,15 @@ namespace Prosthetics.Features.Orders
     public class OrderDto : IRegister
     {
         public int Id { get; set; }
-        public string PatientFullName { get; set; }
-        public string OrderDate { get; set; }
-        public string DeadLine { get; set; }
-        public string Type { get; set; }
-        public List<AdditionalWorkDto> AdditionalWorks { get; set; }
+        public string? PatientFullName { get; set; }
+        public string? OrderDate { get; set; }
+        public string? DeadLine { get; set; }
+        public string? Type { get; set; }
+        public List<AdditionalWorkDto> AdditionalWorks { get; set; } = new List<AdditionalWorkDto>();
         public int AdditionalWorksCount { get; set; }
-        public string Comments { get; set; }
-        public string ShortComment { get; set; }
-        public string Status { get; set; }
+        public string? Comments { get; set; }
+        public string? ShortComment { get; set; }
+        public string? Status { get; set; }
 
         public void Register(TypeAdapterConfig config)
         {
@@ -69,17 +70,6 @@ namespace Prosthetics.Features.Orders
                 default:
                     return "Nowe";
             }
-        }
-    }
-
-    public class AdditionalWorkDto : IRegister
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public void Register(TypeAdapterConfig config)
-        {
-            config.NewConfig<AdditionalWork, AdditionalWorkDto>();
         }
     }
 }

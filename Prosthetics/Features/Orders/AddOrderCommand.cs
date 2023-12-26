@@ -11,7 +11,13 @@ namespace Prosthetics.Features.Orders
         public int DoctorId { get; set; }
         public int PatientId { get; set; }
         public int OrderTypeId { get; set; }
+        public List<int> AdditionalWorksIds { get; set; }
         public DateTime DeadLine { get; set; }
+
+        public AddOrderCommand()
+        {
+            AdditionalWorksIds = new List<int>();
+        }
 
         public void Register(TypeAdapterConfig config)
         {
@@ -36,6 +42,7 @@ namespace Prosthetics.Features.Orders
             var order = request.Adapt<Order>();
 
             order.InsertedDate = _dateTime.Now();
+            order.AdditionalWorks = _dbContext.AdditionalWorks.Where(_ => request.AdditionalWorksIds.Contains(_.Id)).ToList();
 
             await _dbContext.Orders.AddAsync(order);
             await _dbContext.SaveChangesAsync();

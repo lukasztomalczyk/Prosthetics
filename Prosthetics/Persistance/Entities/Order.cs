@@ -9,9 +9,9 @@ namespace Prosthetics.Persistance.Entities
         public Patient? Patient { get; set; }
         public int OrderTypeId { get; set; }
         public OrderType? OrderType { get; set; }
-        [NotMapped]
-        public List<AdditionalWorkOrder>? AdditionalWorkEntityOrders { get; } = new();
-        public List<AdditionalWork>? AdditionalWorks { get; set; }
+        //[NotMapped]
+        //public List<AdditionalWorkOrder>? AdditionalWorkEntityOrders { get; } = new();
+        public List<AdditionalWork> AdditionalWorks { get; set; }
         public DateTime InsertedDate { get; set; }
         public DateTime DeadLine { get; set; }
         public string? Comments { get; set; }

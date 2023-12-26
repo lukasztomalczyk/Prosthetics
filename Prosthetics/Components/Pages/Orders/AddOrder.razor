@@ -2,8 +2,10 @@
 
 @using MediatR
 @using Prosthetics.Common
+@using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
+@using Prosthetics.Features.AdditionalWorks
 @using Prosthetics.Features.Orders
 @using Prosthetics.Features.Patients
 
@@ -12,28 +14,35 @@
 @inject IDateTime _dateTime;
 @inject IStore _store;
 
-<h3>Dodaj zamówienie</h3>
+<h3>Dodaj zamówienie dla pacjenta: @_store.Patient.LastName @_store.Patient.FirstName</h3>
 
-<RadzenLabel Text="Wybierz..." Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
-<RadzenDropDown @bind-Value=@_orderTypeId Data=@_types ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
+<RadzenLabel Text="Typ:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenDropDown @bind-Value=@_orderTypeId Data=@_orderTypes ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
 <br />
-<RadzenLabel Text="Wybierz datę końcową" Component="DatePickerHourFormat" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenLabel Text="Dodatki:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenDropDown @bind-Value=@_additionalWorkIds Multiple=true Data=@_additianalWorks ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
+<br />
+<RadzenLabel Text="Data końcowa" Component="DatePickerHourFormat" Style="margin-right: 8px; vertical-align: middle;" />
 <RadzenDatePicker @bind-Value=@_selectedDeadLine ShowTime="false" DateFormat="dd-MM-yyyy" Name="DatePickerHourFormat" />
 <br />
 <br />
-<ButtonComponent Text="Dodaj" OnButtonClick="AddOrderAsync"></ButtonComponent>
+<ButtonComponent Text="Anuluj" OnButtonClick="OnCancelClick"></ButtonComponent>
+<ButtonComponent Text="Dodaj" OnButtonClick="AddOrderAsync" Type="TypeOfButton.SUCCESS"></ButtonComponent>
 
 @code {
-    private int _orderTypeId = 1;
     private DateTime _selectedDeadLine;
-    private IEnumerable<OrderTypeDto> _types;
+    private int _orderTypeId = 1;
+    private IEnumerable<OrderTypeDto>? _orderTypes;
+    private List<int>? _additionalWorkIds = new();
+    private IEnumerable<AdditionalWorkDto>? _additianalWorks;
 
     protected DateTime GetTimeNow() => _dateTime.Now();
 
     protected override async Task OnInitializedAsync()
     {
         _selectedDeadLine = _dateTime.Now();
-        _types = await _mediator.Send(new GetOrderTypesQuery());
+        _orderTypes = await _mediator.Send(new GetOrderTypesQuery());
+        _additianalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
 
         await base.OnInitializedAsync();
     }
@@ -51,11 +60,14 @@
             PatientId = patientId,
             DeadLine = _selectedDeadLine,
             DoctorId = _store.Order.DoctorId,
-            OrderTypeId = _orderTypeId
+            OrderTypeId = _orderTypeId,
+            AdditionalWorksIds = _additionalWorkIds ?? new()
         });
 
         Thread.Sleep(100);
 
         _navManager.NavigateTo("/orders");
     }
+
+    protected void OnCancelClick() => _navManager.NavigateTo("/orders");
 }
