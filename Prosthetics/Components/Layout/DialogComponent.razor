@@ -1,16 +1,17 @@
-﻿@inject DialogService _dialogService
+﻿@using Prosthetics.Components.Models.Dialog
+@inject DialogService _dialogService
 
 @typeparam TComponent where TComponent : ComponentBase
 
 @code {
+    [Inject]
+    [Parameter]
+    public DialogService Service { get; set; }
     [Parameter]
     public EventCallback<bool> OnCloseEvent { get; set; } = new EventCallback<bool>();
+
     [Parameter]
-    public bool Show { get; set; }
-    [Parameter]
-    public string Title { get; set; }
-    [Parameter]
-    public Dictionary<string, object>? ViewParameters { get; set; }
+    public DialogConfig Config { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -20,16 +21,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Show)
-        {
-            if (ViewParameters != null)
-                ViewParameters.TryAdd(nameof(OnCloseEvent), OnCloseEvent);
-            await _dialogService.OpenAsync<TComponent>(Title, ViewParameters);
-        }
-        else
-        {
-            _dialogService.Close();
-        }
+        // if (Config.ShowDialog)
+        // {
+        //     if (Config.ViewParameters != null)
+        //         Config.ViewParameters.TryAdd(nameof(OnCloseEvent), OnCloseEvent);
+            
+        //     var result = await _dialogService.OpenAsync<TComponent>(Config.Title, Config.ViewParameters);
+        // }
     }
 
     public Action<dynamic> DialogCloseEventHandler() => (dynamic param) => { OnCloseEvent.InvokeAsync(false); };

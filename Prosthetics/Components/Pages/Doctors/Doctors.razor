@@ -25,7 +25,7 @@
     private IEnumerable<DoctorDto>? _doctors;
     private ColumnInfo<DoctorDto>[] _columns = new ColumnInfo<DoctorDto>[]
     {
-        new ColumnInfo<DoctorDto> { Title = "Imię i nazwisko", Property = "FullName" }
+        new ColumnInfo<DoctorDto> { Title = "Imię i nazwisko", Property = "FullName", Display = _ => _.FullName }
     };
 
     protected override async Task OnInitializedAsync()

@@ -6,27 +6,24 @@
 <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="true" PageSize="5" AllowSorting="true"
                 Data="@Data" TItem="TData" RowClick="OnRowClick">
     <Columns>
-            @foreach(var column in ColumnsDefinition)
-            {
-                @if (column.IsCustomDisplay)
-                {
-                    <RadzenDataGridColumn TItem="TData" Title="@column.Title" Property="@column.Property" Visible="@(!column.Hide)">
-                        <Template Context="order">
-                            @column.DisplayAction(order)
-                        </Template>
-                    </RadzenDataGridColumn>
-                }
-                else
-                {
-                     <RadzenDataGridColumn TItem="TData" Title="@column.Title" Property="@column.Property" Visible="@(!column.Hide)"></RadzenDataGridColumn>
-                }
-            }
+        @for (int i = 0; i < ColumnsDefinition.Length; i++)
+        {
+                var temp = ColumnsDefinition[i];
+
+                <RadzenDataGridColumn TItem="TData" Title="@temp.Title" Property="@temp.Property" Visible="@(!temp.Hide)">
+                    <Template Context="context">
+                        <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp.Display(context) </a>
+                    </Template>
+                </RadzenDataGridColumn>
+        }
     </Columns>
 </RadzenDataGrid>
 
 @code {
     [Parameter]
     public EventCallback<TData> OnRowClickEvent { get; set; }
+    [Parameter]
+    public EventCallback<ColEvent<TData>> OnColClickEvent { get; set; }
     [Parameter, AllowNull]
     public IEnumerable<TData> Data { get; set; }
     [Parameter, AllowNull]
@@ -40,4 +37,5 @@
     }
 
     void OnRowClick(DataGridRowMouseEventArgs<TData> param) => this.OnRowClickEvent.InvokeAsync(param.Data);
+    void OnColClick(TData param, string propertyName) => this.OnColClickEvent.InvokeAsync(new ColEvent<TData>(param, propertyName));
 }

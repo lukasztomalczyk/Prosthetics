@@ -27,6 +27,7 @@ namespace Prosthetics
             builder.Services.AddMapster();
             builder.Services.AddRadzenDependency();
             builder.Services.AddHttpClient();
+            builder.Services.AddSingleton<IDialogService, WebDialogService>();
             builder.Services.AddSingleton<IJsonConverter, JsonConverter>();
             builder.Services.AddSingleton<IHttpRequestExecutor, HttpRequestExecutor>();
 

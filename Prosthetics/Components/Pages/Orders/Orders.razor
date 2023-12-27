@@ -1,9 +1,12 @@
 ﻿@page "/orders"
 
 @using MediatR
+@using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
+@using Prosthetics.Components.Models.Dialog
 @using Prosthetics.Components.Models.Grid
+@using Prosthetics.Components.Pages.Orders.Views
 @using Prosthetics.Features
 @using Prosthetics.Features.Orders
 @using Prosthetics.Persistance
@@ -12,57 +15,87 @@
 @inject NavigationManager _navManager
 @inject IMediator _mediator;
 @inject IStore _store;
+@inject IDialogService _dialogService
+@inject DialogService _radzenDialogService
 
 <h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
-<GridComponent TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders" OnRowClickEvent="@(e => OnOrderClick(e))"></GridComponent>
+<GridComponent TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders" 
+    OnRowClickEvent="@(e => OnRowClick(e))" OnColClickEvent="@(e => OnColClick(e))"></GridComponent>
 <br />
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
-<DialogComponent TComponent="Comment" Title="Szczegóły zamówienia" Show="_showOrderComment" OnCloseEvent="@OnCloseDialog" ViewParameters="_viewParameters"></DialogComponent>
+<DialogComponent TComponent="Comment" Config="@_commentDialog"></DialogComponent>
+
+<DialogComponent TComponent="ChangeStatusComponent" Config="@_statusdialog"></DialogComponent>
 
 @code {
     [Parameter]
     public string DoctorId { get; set; }
 
-    private Dictionary<string, object> _viewParameters;
     private IEnumerable<OrderDto>? _orders;
-    private ColumnInfo<OrderDto>[] _columns = new ColumnInfo<OrderDto>[]
-    {   
-        new ColumnInfo<OrderDto> { Title = "Pacjent", Property = "PatientFullName" },
-        new ColumnInfo<OrderDto> { Title = "Typ zamówienia", Property = "Type" },
-        new ColumnInfo<OrderDto> { Title = "Ilość dodatków", Property = "AdditionalWorksCount" },
-        new ColumnInfo<OrderDto> { Title = "Dodatki", Property = "AdditionalWorks", Hide = true },
-        new ColumnInfo<OrderDto> { Title = "Komentarz", Property = "ShortComment" },
-        new ColumnInfo<OrderDto> { Title = "Data zlecenia", Property = "OrderDate" },
-        new ColumnInfo<OrderDto> { Title = "Data końcowa", Property = "DeadLine" },
-        new ColumnInfo<OrderDto> { Title = "Status", Property = "Status" }
-    };
-    private bool _showOrderComment = false;
+    private ColumnInfo<OrderDto>[] _columns = new OrderGridConfig().Data;
+
+    private DialogConfig _commentDialog = new DialogConfig("Komentarz");
+    private DialogConfig _statusdialog = new DialogConfig("Zmień status");
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         // TODO Wywołuje się za każdym razem po wejściu na stronę
         // Inny lifehook
+        _dialogService.Setup(_radzenDialogService);
+        await LoadDataAsync();
+    }
+
+    private void OnRowClick(OrderDto order)
+    {
+
+    }
+
+    private async Task OnColClick(ColEvent<OrderDto> context)
+    {
+        if (context.ColumnName == "Status")
+            await ShowChangeStatusDialog(context.Data);
+        else
+            await ShowCommentDialog(context.Data);
+    }
+
+    private async Task ShowChangeStatusDialog(OrderDto order)
+    {
+        _store.Order.OrderId = order.Id;
+        _statusdialog.Show();
+
+        await _dialogService.OpenAsync<ChangeStatusComponent>(typeof(ChangeStatusComponent), _statusdialog);
+    }
+
+    private async Task LoadDataAsync()
+    {
         var result = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
         _orders = TransformData(result.ToList());
     }
 
-    private void OnOrderClick(OrderDto order)
+    private async Task ShowCommentDialog(OrderDto order)
     {
-        _viewParameters = new Dictionary<string, object>()
-        { 
-            { nameof(order.AdditionalWorks), order.AdditionalWorks.Select(_ => _.Name) },
-            { nameof(order.Comments), order.Comments }
-        };
         _store.Order.OrderId = order.Id;
-        _showOrderComment = true;
+        _commentDialog.ClearViewParameters();
+        _commentDialog.AddViewParameter(nameof(order.AdditionalWorks), order.AdditionalWorks.Select(_ => _.Name));
+        _commentDialog.AddViewParameter(nameof(order.Comments), order.Comments);
+        _commentDialog.Show();
+
+        await _dialogService.OpenAsync<Comment>(typeof(Comment), _commentDialog);
     }
 
-    private void OnCloseDialog(bool show) 
+    private async Task OnCommnetDialogClose(bool show)
     {
-        _showOrderComment = show;
-        _navManager.NavigateTo("/orders", true);
+        //_commentDialog.Hide();
+        await LoadDataAsync();
+    }
+
+    private void OnStatusDialogClose(bool show)
+    {
+        //_statusdialog.Hide();
+        //_navManager.NavigateTo("/orders", true);
     }
 
     private void OnAddButtonClicked() => _navManager.NavigateTo("/add-patient");
