@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Prosthetics.Extensions;
 using Prosthetics.Features.AdditionalWorks;
 using Prosthetics.Models;
 using Prosthetics.Persistance;
@@ -44,6 +45,7 @@ namespace Prosthetics.Features.Orders
         public string? Comments { get; set; }
         public string? ShortComment { get; set; }
         public string? Status { get; set; }
+        public int OrderStatusId { get; set; }
 
         public void Register(TypeAdapterConfig config)
         {
@@ -51,25 +53,9 @@ namespace Prosthetics.Features.Orders
                 .Map(dest => dest.PatientFullName, src => src.Patient == null ? string.Empty : $"{src.Patient.LastName} {src.Patient.FirstName}")
                 .Map(dest => dest.OrderDate, src => src.InsertedDate.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.DeadLine, src => src.DeadLine.ToString("dd-MM-yyyy"))
-                .Map(dest => dest.Status, src => MapStatus(src.Status))
-                .Map(dest => dest.Type, src => src.OrderType != null ? src.OrderType.Name : string.Empty);
-        }
-
-        public static string MapStatus(OrderStatus status)
-        {
-            switch (status)
-            {
-                case OrderStatus.New:
-                    return "Nowe";
-                case OrderStatus.InProgress:
-                    return "W przygotowaniu";
-                case OrderStatus.Canceled:
-                    return "Anulowane";
-                case OrderStatus.Sent:
-                    return "Wysłane";
-                default:
-                    return "Nowe";
-            }
+                .Map(dest => dest.Status, src => src.Status.GetStatus())
+                .Map(dest => dest.Type, src => src.OrderType != null ? src.OrderType.Name : string.Empty)
+                .Map(dest => dest.OrderStatusId, src => (int)src.Status);
         }
     }
 }

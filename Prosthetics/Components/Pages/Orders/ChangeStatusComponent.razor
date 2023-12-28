@@ -1,6 +1,59 @@
-﻿<h3>ChangeStatusComponent</h3>
+﻿@using MediatR
+@using Prosthetics.Common
+@using Prosthetics.Components.Enums
+@using Prosthetics.Components.Layout
+@using Prosthetics.Components.Models.Orders
+@using Prosthetics.Extensions
+@using Prosthetics.Features
+@using Prosthetics.Features.Orders
+@using Prosthetics.Models
+
+@inject NavigationManager _navManager
+@inject NotificationService _notificationService
+@inject IMediator _mediator
+@inject IDialogService _dialogService
+@inject IStore _store;
+
+<RadzenLabel Text="Nowy status:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenDropDown @bind-Value=@_orderStatusId Data=@_statuses ValueProperty="Id"
+    TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
+<br />
+<br />
+<ButtonComponent Text="Anuluj" OnButtonClick="OnCancelClick"></ButtonComponent>
+<ButtonComponent Text="Zmień" OnButtonClick="OnChangeClick" Type="TypeOfButton.SUCCESS"></ButtonComponent>
 
 @code {
     [Parameter]
-    public EventCallback<bool> OnCloseEvent { get; set; } = new EventCallback<bool>();
+    public EventCallback<string> OnCloseEvent { get; set; }
+
+    private int _orderStatusId { get; set; }
+    private IEnumerable<OrderStatusDto> _statuses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _statuses = Enum.GetValues(typeof(OrderStatus))
+           .Cast<int>()
+           .Select(e => new OrderStatusDto(e, ((OrderStatus)e).GetStatus()));
+        _orderStatusId = _store.Order.StatusOrderId;
+
+        await base.OnInitializedAsync();
+    }
+
+    protected void OnCancelClick() => _navManager.NavigateTo("/orders");
+
+    protected async Task OnChangeClick()
+    {
+        await _mediator.Send(new ChangeOrderStatusCommand()
+        {
+            OrderId = _store.Order.OrderId,
+            NewOrderStatusId = _orderStatusId
+        });
+        _notificationService.Notify(new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = "Status poprawnie zmieniony",
+            Duration = 4000
+        });
+        await OnCloseEvent.InvokeAsync();
+    }
 }

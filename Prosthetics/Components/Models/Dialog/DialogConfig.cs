@@ -9,21 +9,6 @@
 
         public Dictionary<string, object> ViewParameters { get; set; } = new();
         public string Title { get; set; }
-        public bool ShowDialog { get; set; }
-
-        public DialogConfig Show()
-        {
-            ShowDialog = true;
-
-            return this;
-        }
-
-        public DialogConfig Hide()
-        {
-            ShowDialog = false;
-
-            return this;
-        }
 
         public DialogConfig ClearViewParameters()
         {
@@ -34,7 +19,10 @@
 
         public DialogConfig AddViewParameter(string key, object value)
         {
-            ViewParameters.TryAdd(key, value);
+            if (ViewParameters.TryGetValue(key, out object _value))
+                _value = value;
+            else
+                ViewParameters.TryAdd(key, value);
 
             return this;
         }

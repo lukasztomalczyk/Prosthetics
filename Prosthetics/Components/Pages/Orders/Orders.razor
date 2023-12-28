@@ -20,15 +20,14 @@
 
 <h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
-<GridComponent TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders" 
+<GridComponent @ref="_orderGrid" TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders"
     OnRowClickEvent="@(e => OnRowClick(e))" OnColClickEvent="@(e => OnColClick(e))"></GridComponent>
 <br />
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
-<DialogComponent TComponent="Comment" Config="@_commentDialog"></DialogComponent>
-
-<DialogComponent TComponent="ChangeStatusComponent" Config="@_statusdialog"></DialogComponent>
-
+<DialogComponent TComponent="Comment" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
+<DialogComponent TComponent="ChangeStatusComponent" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
+<DialogComponent TComponent="AdditionalWorksComponent" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
 @code {
     [Parameter]
     public string DoctorId { get; set; }
@@ -37,7 +36,9 @@
     private ColumnInfo<OrderDto>[] _columns = new OrderGridConfig().Data;
 
     private DialogConfig _commentDialog = new DialogConfig("Komentarz");
+    private DialogConfig _additionalWorksDialog = new DialogConfig("Dodatkowe zlecenia");
     private DialogConfig _statusdialog = new DialogConfig("Zmień status");
+    private GridComponent<OrderDto> _orderGrid;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,16 +58,25 @@
     {
         if (context.ColumnName == "Status")
             await ShowChangeStatusDialog(context.Data);
-        else
+        else if (context.ColumnName == "ShortComment")
             await ShowCommentDialog(context.Data);
+        else
+            await ShowAdditionalWorksDialog(context.Data);
+    }
+
+    private async Task ShowAdditionalWorksDialog(OrderDto order)
+    {
+        //_additionalWorksDialog.ClearViewParameters();
+        _additionalWorksDialog.AddViewParameter(nameof(order.AdditionalWorks), order.AdditionalWorks.Select(_ => _.Name));
+
+        await _dialogService.OpenAsync<AdditionalWorksComponent>(_additionalWorksDialog);
     }
 
     private async Task ShowChangeStatusDialog(OrderDto order)
     {
+        _store.Order.StatusOrderId = order.OrderStatusId;
         _store.Order.OrderId = order.Id;
-        _statusdialog.Show();
-
-        await _dialogService.OpenAsync<ChangeStatusComponent>(typeof(ChangeStatusComponent), _statusdialog);
+        await _dialogService.OpenAsync<ChangeStatusComponent>(_statusdialog);
     }
 
     private async Task LoadDataAsync()
@@ -78,24 +88,18 @@
     private async Task ShowCommentDialog(OrderDto order)
     {
         _store.Order.OrderId = order.Id;
-        _commentDialog.ClearViewParameters();
-        _commentDialog.AddViewParameter(nameof(order.AdditionalWorks), order.AdditionalWorks.Select(_ => _.Name));
+        //_commentDialog.ClearViewParameters();
         _commentDialog.AddViewParameter(nameof(order.Comments), order.Comments);
-        _commentDialog.Show();
 
-        await _dialogService.OpenAsync<Comment>(typeof(Comment), _commentDialog);
+        await _dialogService.OpenAsync<Comment>(_commentDialog);
     }
 
-    private async Task OnCommnetDialogClose(bool show)
+    private async Task OnDialogClose(dynamic value)
     {
-        //_commentDialog.Hide();
+        // TODO lista odświeża się nawet jeśli nie zostały zmiany wprowadzone
         await LoadDataAsync();
-    }
-
-    private void OnStatusDialogClose(bool show)
-    {
-        //_statusdialog.Hide();
-        //_navManager.NavigateTo("/orders", true);
+        await _orderGrid.RefreshDataAsync();
+        _dialogService.Close();
     }
 
     private void OnAddButtonClicked() => _navManager.NavigateTo("/add-patient");
@@ -112,20 +116,5 @@
         });
 
         return list;
-    }
-
-    private string GetStatus(int status)
-    {
-        switch (status)
-        {
-            case 1:
-                return "nowe";
-            case 2:
-                return "w przygotowaniu";
-            case 3:
-                return "wycofane";
-            default:
-                return "nowe";
-        }
     }
 }

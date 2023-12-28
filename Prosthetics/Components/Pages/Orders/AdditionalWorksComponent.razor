@@ -1,0 +1,13 @@
+﻿<h3>Dodatkowe zadania:</h3>
+<ul class="list-group">
+    @foreach (var item in AdditionalWorks)
+    {
+        <li class="list-group-item">@item</li>
+    }
+</ul>
+<br />
+
+@code {
+    [Parameter]
+    public IEnumerable<string> AdditionalWorks { get; set; }
+}

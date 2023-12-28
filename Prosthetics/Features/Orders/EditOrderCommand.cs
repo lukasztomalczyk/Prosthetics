@@ -4,17 +4,18 @@ using Prosthetics.Persistance;
 
 namespace Prosthetics.Features.Orders
 {
-    public class EditOrderCommand : IRequest 
+    public class EditOrderCommand
+        : IRequest 
     {
         public string? Comments { get; set; }
         public int OrderId { get; set; }
     }
 
-    public class EditOrderCommandHandler : IRequestHandler<EditOrderCommand, Unit>
+    public class EditCommentCommandHandler : IRequestHandler<EditOrderCommand, Unit>
     {
         private readonly ProstheticsDbContext _dbContext;
 
-        public EditOrderCommandHandler(ProstheticsDbContext dbContext)
+        public EditCommentCommandHandler(ProstheticsDbContext dbContext)
         {
             _dbContext = dbContext;
         }

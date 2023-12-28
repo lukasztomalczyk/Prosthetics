@@ -4,31 +4,17 @@
 @typeparam TComponent where TComponent : ComponentBase
 
 @code {
-    [Inject]
     [Parameter]
-    public DialogService Service { get; set; }
+    public EventCallback<string> OnCloseEvent { get; set; } = new EventCallback<string>();
     [Parameter]
-    public EventCallback<bool> OnCloseEvent { get; set; } = new EventCallback<bool>();
-
-    [Parameter]
-    public DialogConfig Config { get; set; }
+    public DialogConfig? Setup { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _dialogService.OnClose += DialogCloseEventHandler();
+        // _dialogService.OnClose += DialogCloseEventHandler();
         await base.OnInitializedAsync();
+        Setup.AddViewParameter(nameof(OnCloseEvent), OnCloseEvent);
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        // if (Config.ShowDialog)
-        // {
-        //     if (Config.ViewParameters != null)
-        //         Config.ViewParameters.TryAdd(nameof(OnCloseEvent), OnCloseEvent);
-            
-        //     var result = await _dialogService.OpenAsync<TComponent>(Config.Title, Config.ViewParameters);
-        // }
-    }
-
-    public Action<dynamic> DialogCloseEventHandler() => (dynamic param) => { OnCloseEvent.InvokeAsync(false); };
+    public Action<dynamic> DialogCloseEventHandler() => (dynamic param) => { OnCloseEvent.InvokeAsync(typeof(TComponent).Name); };
 }

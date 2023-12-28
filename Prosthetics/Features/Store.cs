@@ -17,6 +17,7 @@
         public int DoctorId { get; set; }
         public string DoctorFullName { get; set; }
         public int OrderId { get; set; }
+        public int StatusOrderId { get; set; }
     }
 
     public class PatientStore

@@ -3,18 +3,18 @@
 
 @typeparam TData
 
-<RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="true" PageSize="5" AllowSorting="true"
-                Data="@Data" TItem="TData" RowClick="OnRowClick">
+<RadzenDataGrid @ref="_dataGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                AllowPaging="true" PageSize="5" AllowSorting="true" Data="@Data" TItem="TData" RowClick="OnRowClick">
     <Columns>
         @for (int i = 0; i < ColumnsDefinition.Length; i++)
         {
-                var temp = ColumnsDefinition[i];
+            var temp = ColumnsDefinition[i];
 
-                <RadzenDataGridColumn TItem="TData" Title="@temp.Title" Property="@temp.Property" Visible="@(!temp.Hide)">
-                    <Template Context="context">
-                        <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp.Display(context) </a>
-                    </Template>
-                </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TData" Title="@temp.Title" Property="@temp.Property" Visible="@(!temp.Hide)">
+                <Template Context="context">
+                    <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp.Display(context) </a>
+                </Template>
+            </RadzenDataGridColumn>
         }
     </Columns>
 </RadzenDataGrid>
@@ -29,13 +29,13 @@
     [Parameter, AllowNull]
     public ColumnInfo<TData>[] ColumnsDefinition { get; set; }
 
-    RadzenDataGrid<TData> dataGrid;
+    private RadzenDataGrid<TData> _dataGrid;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     await dataGrid.RefreshDataAsync();
+    // }
+    public async Task RefreshDataAsync() => await _dataGrid.RefreshDataAsync();
     void OnRowClick(DataGridRowMouseEventArgs<TData> param) => this.OnRowClickEvent.InvokeAsync(param.Data);
     void OnColClick(TData param, string propertyName) => this.OnColClickEvent.InvokeAsync(new ColEvent<TData>(param, propertyName));
 }
