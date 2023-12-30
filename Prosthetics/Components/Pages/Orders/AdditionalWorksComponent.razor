@@ -9,5 +9,7 @@
 
 @code {
     [Parameter]
+    public EventCallback<string> OnCloseEvent { get; set; }
+    [Parameter]
     public IEnumerable<string> AdditionalWorks { get; set; }
 }

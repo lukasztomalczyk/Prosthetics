@@ -5,24 +5,32 @@ namespace Prosthetics.Features.Admin
     public class ExcelDefinition
     {
         private readonly IXLWorksheet _worksheet;
-        private readonly IEnumerable<OrderByRangeDto> _orders;
+        private readonly IEnumerable<ParientOrdersDto> _patientsOrders;
+        private readonly IEnumerable<string> _headers;
+        private Dictionary<string, int>? _headersWithColNumber;
 
-        public ExcelDefinition(IXLWorksheet worksheet, IEnumerable<OrderByRangeDto> orders)
+        public ExcelDefinition(IXLWorksheet worksheet, IEnumerable<ParientOrdersDto> doctorsOrders, 
+            IEnumerable<string> headers)
         {
             _worksheet = worksheet;
-            _orders = orders;
+            _patientsOrders = doctorsOrders;
+            _headers = headers;
         }
 
         public ExcelDefinition AddHeaders()
         {
-            _worksheet.Cell(1, 1).Value = "Imię i nazwisko";
-            _worksheet.Cell(1, 2).Value = "Typ zamówienia";
+            _headersWithColNumber = new Dictionary<string, int>();
 
-            var maxAdditionalWorks = _orders.Select(_ => _.AdditionalWorks.Count).OrderByDescending(_ => _).FirstOrDefault();
-
-            for (int i = 3; i < maxAdditionalWorks + 3; i++)
+            for (int i = 0; i < _headers.Count(); i++)
             {
-                _worksheet.Cell(1, i).Value = $"Dodatek {i - 2}";
+                _headersWithColNumber.Add(_headers.ElementAt(i), i + 3);
+            }
+
+            _worksheet.Cell(1, 2).Value = "Imię i nazwisko";
+
+            foreach (var header in _headersWithColNumber) 
+            {
+                _worksheet.Cell(1, header.Value).Value = header.Key;
             }
 
             return this;
@@ -30,14 +38,19 @@ namespace Prosthetics.Features.Admin
 
         public ExcelDefinition AddRows()
         {
-            for (int i = 2; i < _orders.Count() + 2; i++)
-            {
-                _worksheet.Cell(i, 1).Value = _orders.ElementAt(i - 2).PatientFullName;
-                _worksheet.Cell(i, 2).Value = _orders.ElementAt(i - 2).Type;
+            ParientOrdersDto orderByPatient;
+            KeyValuePair<string, int> header;
 
-                for (int j = 3; j < _orders.ElementAt(i - 2).AdditionalWorks.Count + 3; j++)
+            for (int i = 0; i < _patientsOrders.Count(); i++)
+            {
+                orderByPatient = _patientsOrders.ElementAt(i);
+                _worksheet.Cell(i + 2, 2).Value = orderByPatient.PatientFullName;
+
+                for (int j = 0; j < _headersWithColNumber.Count(); j++)
                 {
-                    _worksheet.Cell(i, j).Value = _orders.ElementAt(i - 2).AdditionalWorks.ElementAt(j - 3).Name;
+                    header = _headersWithColNumber.ElementAt(j);
+                    _worksheet.Cell(i + 2, header.Value).Value = orderByPatient.Orders.Any(_ => _.OrderName == header.Key)
+                        ? orderByPatient.Orders.First(_ => _.OrderName == header.Key).Count : 0;
                 }
             }
 

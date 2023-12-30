@@ -31,11 +31,13 @@ namespace Prosthetics.Features.Patients
             var patientEntity = await _dbContext.Patients
                 .FirstOrDefaultAsync(_ => _.FirstName == request.FirstName && _.LastName == request.LastName);
 
-            if (patientEntity == null) 
+            if (patientEntity == null)
+            {
                 patientEntity = request.Adapt<Patient>();
 
-            await _dbContext.Patients.AddAsync(patientEntity);
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.Patients.AddAsync(patientEntity);
+                await _dbContext.SaveChangesAsync();
+            }
 
             return patientEntity.Id;
         }

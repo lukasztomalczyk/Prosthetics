@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MediatR;
 using Prosthetics.Common;
+using Prosthetics.Models;
 using Prosthetics.Persistance;
 using Prosthetics.Persistance.Entities;
 
@@ -22,7 +23,7 @@ namespace Prosthetics.Features.Orders
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<AddOrderCommand, Order>()
-                .Map(dest => dest.Status, src => 1);
+                .Map(dest => dest.Status, src => OrderStatus.New);
         }
     }
 

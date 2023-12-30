@@ -112,7 +112,7 @@
             if (_.Comments?.Length > 10)
                 _.ShortComment = _.Comments.Substring(0, 10);
             else
-                _.ShortComment = _.Comments;
+                _.ShortComment = string.IsNullOrEmpty(_.Comments) ? "..." : _.Comments;
         });
 
         return list;

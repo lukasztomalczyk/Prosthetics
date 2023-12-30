@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prosthetics", "Prosthetics\Prosthetics.csproj", "{DAA21CC2-FC01-4833-8217-2CB7060DE33C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prosthetics.Tests", "Prosthetics.Tests\Prosthetics.Tests.csproj", "{BBDDD75C-79DB-4D0C-93C2-C0912B67B956}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{DAA21CC2-FC01-4833-8217-2CB7060DE33C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA21CC2-FC01-4833-8217-2CB7060DE33C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DAA21CC2-FC01-4833-8217-2CB7060DE33C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BBDDD75C-79DB-4D0C-93C2-C0912B67B956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBDDD75C-79DB-4D0C-93C2-C0912B67B956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBDDD75C-79DB-4D0C-93C2-C0912B67B956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBDDD75C-79DB-4D0C-93C2-C0912B67B956}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

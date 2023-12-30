@@ -15,6 +15,8 @@
 
 @code {
     [Parameter]
+    public EventCallback<string> OnCloseEvent { get; set; }
+    [Parameter]
     public string Comments { get; set; } = string.Empty;
 
     private bool _disableTextArea = true;
@@ -40,7 +42,7 @@
                     Summary = "Komentarz zapisany",
                     Duration = 4000
                 });
-            _dialogService.Close();
+            await OnCloseEvent.InvokeAsync();
         }
     }
 }

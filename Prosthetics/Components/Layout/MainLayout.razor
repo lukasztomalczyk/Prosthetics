@@ -28,7 +28,10 @@
     private IEnumerable<SideBarMenuInfo> _menuList = new List<SideBarMenuInfo>()
     {
         new SideBarMenuInfo() { Text = "Lekarze", PageUrl = "/doctors", Icon = "account_box" },
-        new SideBarMenuInfo() { Text = "Admin", PageUrl = "/export-excel", Icon = "assignment_ind" }
+        new SideBarMenuInfo() { Text = "Admin", Icon = "build", Multiple = true, Items = new List<SideBarMenuInfo>()
+        {
+            new SideBarMenuInfo() { Text = "Raport", PageUrl = "/export-excel", Icon = "list" }
+        }}
     };
 
 }

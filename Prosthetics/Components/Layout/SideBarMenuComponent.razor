@@ -2,12 +2,24 @@
 
 @inject NavigationManager _navManager
 
-<RadzenPanelMenu>
-    @foreach (var item in MenuList)
+    @foreach (var mainManu in MenuList)
     {
-        <RadzenPanelMenuItem Text="@item.Text" Icon="@item.Icon" Click="@(args => OnMenuItemClick(item))" />
+        <RadzenPanelMenu Multiple="@mainManu.Multiple">
+            @if (mainManu.Multiple)
+            {
+                <RadzenPanelMenuItem Text="@mainManu.Text" Icon="@mainManu.Icon" Click="@(args => OnMenuItemClick(mainManu))">
+                @foreach (var item in mainManu.Items)
+                {
+                    <RadzenPanelMenuItem Text="@item.Text" Icon="@item.Icon" Click="@(args => OnMenuItemClick(item))" />
+                }
+                </RadzenPanelMenuItem>
+            } 
+            else
+            {
+                <RadzenPanelMenuItem Text="@mainManu.Text" Icon="@mainManu.Icon" Click="@(args => OnMenuItemClick(mainManu))" />
+            }
+        </RadzenPanelMenu>
     }
-</RadzenPanelMenu>
 
 @code {
     [Parameter]

@@ -9,34 +9,36 @@ namespace Prosthetics.Common
         void Dispose();
         Stream SaveFile(Stream stream);
         IExcelExporter AddWorksheet(string name);
-        IExcelExporter SetData(Action<IXLWorksheet> action);
+        IExcelExporter SetDataForWorksheet(string name, Action<IXLWorksheet> action);
     }
 
     public class ExcelExporter : IDisposable, IExcelExporter
     {
         private XLWorkbook _xlWorkbook;
-        private IXLWorksheet _worksheet;
 
         public IExcelExporter New()
         {
             if (_xlWorkbook != null) _xlWorkbook.Dispose();
-            _xlWorkbook = new XLWorkbook();
+                _xlWorkbook = new XLWorkbook();
 
             return this;
         }
 
         public IExcelExporter AddWorksheet(string name)
         {
-            _worksheet = _xlWorkbook.Worksheets.Add(name);
+            _xlWorkbook.Worksheets.Add(name);
 
             return this;
         }
 
-        public IExcelExporter SetData(Action<IXLWorksheet> action)
+        public IExcelExporter SetDataForWorksheet(string name, Action<IXLWorksheet> action)
         {
             try
             {
-                action.Invoke(_worksheet);
+                var worksheet = _xlWorkbook.Worksheet(name) 
+                    ?? throw new Exception($"Worksheet with name: {name} was not found. Create new AddWorksheet");
+
+                action.Invoke(worksheet);
 
             }
             catch (Exception ex)

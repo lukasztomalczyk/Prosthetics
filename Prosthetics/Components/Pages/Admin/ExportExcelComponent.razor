@@ -6,7 +6,9 @@
 @using MediatR
 @using Prosthetics.Common
 @using Prosthetics.Components.Layout
+@using Prosthetics.Features.AdditionalWorks
 @using Prosthetics.Features.Admin
+@using Prosthetics.Features.Orders
 
 @inject IFileSaver _fileServer
 @inject IExcelExporter _excelExporter
@@ -36,18 +38,35 @@ do:
 
     protected async Task GenerateReport()
     {
-        var result = await _mediator.Send(new GetOrdersByDateRangeQuery()
+        var result = await _mediator.Send(new GetDoctorsOrdersByPatientQuery()
         {
             From = _from,
             To = _to
         });
+        var headers = await GetHeadersNamesAsync();
         _excelExporter.New();
-        _excelExporter.AddWorksheet($"Raport_{_from.ToString("dd-MM-yyyy")}-{_to.ToString("dd-MM-yyyy")}");
-        _excelExporter.SetData(_ =>
+
+        foreach (var doctorOrders in result)
         {
-            new ExcelDefinition(_, result).AddHeaders().AddRows();
-        });
+            _excelExporter.AddWorksheet(doctorOrders.DoctorFullName);
+            _excelExporter.SetDataForWorksheet(doctorOrders.DoctorFullName, excel =>
+            {
+                new ExcelDefinition(excel, doctorOrders.OrdersByPatients, headers).AddHeaders().AddRows();
+            });
+        }
+
         await SaveFile();
+    }
+
+    private async Task<IEnumerable<string>> GetHeadersNamesAsync()
+    {
+        var orderTypes = await _mediator.Send(new GetOrderTypesQuery());
+        var additionalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
+
+        var headers = orderTypes.Select(_ => _.Name).ToList();
+        headers.AddRange(additionalWorks.Select(_ => _.Name));
+
+        return headers;
     }
 
     protected async Task SaveFile()
