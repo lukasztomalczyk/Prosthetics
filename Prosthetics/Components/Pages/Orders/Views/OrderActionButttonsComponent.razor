@@ -1,0 +1,33 @@
+﻿@using Prosthetics.Common
+@using Prosthetics.Components.Enums
+@using Prosthetics.Components.Layout
+
+@inject DialogService _radzenDialogService
+@inject IDialogService _dialogService
+
+
+<div>
+    <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>
+    <ButtonComponent Text="Status" Type="TypeOfButton.SUCCESS" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>
+</div>
+
+@typeparam TData
+
+@code {
+    [Parameter]
+    public TData Data { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _dialogService.Setup(_radzenDialogService);
+    }
+
+    protected async Task ClientDeleteButtonClick()
+    {
+        await _dialogService.ConfirmAsync("Czy chcesz usunąć zamówienie?", "Usuń", () =>
+        {
+            Console.WriteLine();
+        });
+    }
+}

@@ -9,6 +9,7 @@ namespace Prosthetics.Common
         void Setup(DialogService dialogService);
         Task OpenAsync<TComponent>(DialogConfig config) where TComponent : ComponentBase;
         void Close();
+        Task ConfirmAsync(string message, string title, Action onYes, Action<Task> onNo = null);
     }
 
     public class WebDialogService : IDialogService
@@ -25,6 +26,16 @@ namespace Prosthetics.Common
             where TComponent : ComponentBase
         {
             await _dialogService.OpenAsync<TComponent>(config.Title, config.ViewParameters);
+        }
+
+        public async Task ConfirmAsync(string message, string title, Action onYes, Action<Task> onNo = null)
+        {
+            var confirmResult = await _dialogService.Confirm(message, title, new ConfirmOptions() { OkButtonText = "Tak", CancelButtonText = "Nie" });
+
+            if (confirmResult.HasValue && confirmResult.Value)
+            {
+                onYes.Invoke();
+            }
         }
     }
 }

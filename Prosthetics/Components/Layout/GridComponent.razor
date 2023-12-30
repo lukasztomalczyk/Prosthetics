@@ -12,7 +12,14 @@
 
             <RadzenDataGridColumn TItem="TData" Title="@temp.Title" Property="@temp.Property" Visible="@(!temp.Hide)">
                 <Template Context="context">
-                    <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp.Display(context) </a>
+                    @if(temp.Template != null)
+                    {
+                        @temp.Template.Invoke(context)
+                    }
+                    else
+                    {
+                        <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp.Display(context) </a>
+                    }
                 </Template>
             </RadzenDataGridColumn>
         }

@@ -6,6 +6,7 @@
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Dialog
 @using Prosthetics.Components.Models.Grid
+@using Prosthetics.Components.Pages.Orders.ViewModels
 @using Prosthetics.Components.Pages.Orders.Views
 @using Prosthetics.Features
 @using Prosthetics.Features.Orders
@@ -20,7 +21,7 @@
 
 <h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
-<GridComponent @ref="_orderGrid" TData="OrderDto" ColumnsDefinition="@_columns" Data="@_orders"
+<GridComponent @ref="_orderGrid" TData="OrderView" ColumnsDefinition="@_columns" Data="@_orders"
     OnRowClickEvent="@(e => OnRowClick(e))" OnColClickEvent="@(e => OnColClick(e))"></GridComponent>
 <br />
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
@@ -28,17 +29,18 @@
 <DialogComponent TComponent="Comment" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
 <DialogComponent TComponent="ChangeStatusComponent" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
 <DialogComponent TComponent="AdditionalWorksComponent" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
+
 @code {
     [Parameter]
-    public string DoctorId { get; set; }
+    public required string DoctorId { get; set; }
 
-    private IEnumerable<OrderDto>? _orders;
-    private ColumnInfo<OrderDto>[] _columns = new OrderGridConfig().Data;
+    private IEnumerable<OrderView>? _orders;
+    private ColumnInfo<OrderView>[] _columns = new OrderGridConfig().Data;
 
     private DialogConfig _commentDialog = new DialogConfig("Komentarz");
     private DialogConfig _additionalWorksDialog = new DialogConfig("Dodatkowe zlecenia");
     private DialogConfig _statusdialog = new DialogConfig("Zmień status");
-    private GridComponent<OrderDto> _orderGrid;
+    private GridComponent<OrderView> _orderGrid;
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,12 +51,12 @@
         await LoadDataAsync();
     }
 
-    private void OnRowClick(OrderDto order)
+    private void OnRowClick(OrderView order)
     {
 
     }
 
-    private async Task OnColClick(ColEvent<OrderDto> context)
+    private async Task OnColClick(ColEvent<OrderView> context)
     {
         if (context.ColumnName == "Status")
             await ShowChangeStatusDialog(context.Data);
@@ -64,7 +66,7 @@
             await ShowAdditionalWorksDialog(context.Data);
     }
 
-    private async Task ShowAdditionalWorksDialog(OrderDto order)
+    private async Task ShowAdditionalWorksDialog(OrderView order)
     {
         //_additionalWorksDialog.ClearViewParameters();
         _additionalWorksDialog.AddViewParameter(nameof(order.AdditionalWorks), order.AdditionalWorks.Select(_ => _.Name));
@@ -72,7 +74,7 @@
         await _dialogService.OpenAsync<AdditionalWorksComponent>(_additionalWorksDialog);
     }
 
-    private async Task ShowChangeStatusDialog(OrderDto order)
+    private async Task ShowChangeStatusDialog(OrderView order)
     {
         _store.Order.StatusOrderId = order.OrderStatusId;
         _store.Order.OrderId = order.Id;
@@ -85,7 +87,7 @@
         _orders = TransformData(result.ToList());
     }
 
-    private async Task ShowCommentDialog(OrderDto order)
+    private async Task ShowCommentDialog(OrderView order)
     {
         _store.Order.OrderId = order.Id;
         //_commentDialog.ClearViewParameters();
@@ -104,7 +106,7 @@
 
     private void OnAddButtonClicked() => _navManager.NavigateTo("/add-patient");
 
-    private IEnumerable<OrderDto> TransformData(List<OrderDto> list)
+    private IEnumerable<OrderView> TransformData(List<OrderDto> list)
     {
         list.ForEach(_ =>
         {
@@ -115,6 +117,29 @@
                 _.ShortComment = string.IsNullOrEmpty(_.Comments) ? "..." : _.Comments;
         });
 
-        return list;
+        return list.Select(_ => new OrderView()
+        {
+            Id = _.Id,
+            PatientFullName = _.PatientFullName,
+            OrderDate = _.OrderDate,
+            DeadLine = _.DeadLine,
+            Type = _.Type,
+            Status = _.Status,
+            AdditionalWorks = _.AdditionalWorks,
+            AdditionalWorksCount = _.AdditionalWorksCount,
+            Comments = _.Comments,
+            ShortComment = _.ShortComment,
+            OrderStatusId = _.OrderStatusId,
+            Actions = GenerateActionButtonsView(_)
+        })
+        .ToList();
     }
+
+    private RenderFragment GenerateActionButtonsView(OrderDto order) => builder =>
+    {
+        var type = typeof(OrderActionButttonsComponent<>).MakeGenericType(new[] { typeof(OrderDto) });
+        builder.OpenComponent(1, type);
+        builder.AddAttribute(2, "Data", order);
+        builder.CloseComponent();
+    };
 }

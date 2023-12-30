@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Prosthetics.Extensions;
 using Prosthetics.Features.AdditionalWorks;
@@ -36,16 +37,17 @@ namespace Prosthetics.Features.Orders
     public class OrderDto : IRegister
     {
         public int Id { get; set; }
-        public string? PatientFullName { get; set; }
-        public string? OrderDate { get; set; }
-        public string? DeadLine { get; set; }
-        public string? Type { get; set; }
+        public required string PatientFullName { get; set; }
+        public required string OrderDate { get; set; }
+        public required string DeadLine { get; set; }
+        public required string Type { get; set; }
         public List<AdditionalWorkDto> AdditionalWorks { get; set; } = new List<AdditionalWorkDto>();
         public int AdditionalWorksCount { get; set; }
         public string? Comments { get; set; }
-        public string? ShortComment { get; set; }
-        public string? Status { get; set; }
+        public required string ShortComment { get; set; }
+        public required string Status { get; set; }
         public int OrderStatusId { get; set; }
+
 
         public void Register(TypeAdapterConfig config)
         {
