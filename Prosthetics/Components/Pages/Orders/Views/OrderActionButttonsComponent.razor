@@ -1,14 +1,18 @@
 ﻿@using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
+@using Prosthetics.Components.Models.Dialog
+@using Prosthetics.Features
 
 @inject DialogService _radzenDialogService
 @inject IDialogService _dialogService
+@inject IStore _store
 
+<DialogComponent TComponent="ChangeStatusComponent" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
 
 <div>
     <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>
-    <ButtonComponent Text="Status" Type="TypeOfButton.SUCCESS" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>
+    <ButtonComponent Text="Status" Type="TypeOfButton.SUCCESS" OnButtonClick="@OnChangeStatusButton"></ButtonComponent>
 </div>
 
 @typeparam TData
@@ -16,6 +20,12 @@
 @code {
     [Parameter]
     public TData Data { get; set; }
+    [Parameter]
+    public int OrderStatusId { get; set; }
+    [Parameter]
+    public int OrderId { get; set; }
+
+    private DialogConfig _statusdialog = new DialogConfig("Zmień status");
 
     protected override async Task OnInitializedAsync()
     {
@@ -29,5 +39,20 @@
         {
             Console.WriteLine();
         });
+    }
+
+    protected async Task OnChangeStatusButton()
+    {
+        _store.Order.StatusOrderId = OrderStatusId;
+        _store.Order.OrderId = OrderId;
+        await _dialogService.OpenAsync<ChangeStatusComponent>(_statusdialog);
+    }
+
+    private async Task OnDialogClose(dynamic value)
+    {
+        // TODO lista odświeża się nawet jeśli nie zostały zmiany wprowadzone
+        // LoadDataAsync();
+        //await _orderGrid.RefreshDataAsync();
+        _dialogService.Close();
     }
 }

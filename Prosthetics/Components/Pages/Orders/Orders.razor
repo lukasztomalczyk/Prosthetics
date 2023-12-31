@@ -27,7 +27,6 @@
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 <DialogComponent TComponent="Comment" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
-<DialogComponent TComponent="ChangeStatusComponent" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
 <DialogComponent TComponent="AdditionalWorksComponent" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
 
 @code {
@@ -39,7 +38,7 @@
 
     private DialogConfig _commentDialog = new DialogConfig("Komentarz");
     private DialogConfig _additionalWorksDialog = new DialogConfig("Dodatkowe zlecenia");
-    private DialogConfig _statusdialog = new DialogConfig("Zmień status");
+
     private GridComponent<OrderView> _orderGrid;
 
     protected override async Task OnInitializedAsync()
@@ -58,9 +57,7 @@
 
     private async Task OnColClick(ColEvent<OrderView> context)
     {
-        if (context.ColumnName == "Status")
-            await ShowChangeStatusDialog(context.Data);
-        else if (context.ColumnName == "ShortComment")
+        if (context.ColumnName == "ShortComment")
             await ShowCommentDialog(context.Data);
         else
             await ShowAdditionalWorksDialog(context.Data);
@@ -74,12 +71,7 @@
         await _dialogService.OpenAsync<AdditionalWorksComponent>(_additionalWorksDialog);
     }
 
-    private async Task ShowChangeStatusDialog(OrderView order)
-    {
-        _store.Order.StatusOrderId = order.OrderStatusId;
-        _store.Order.OrderId = order.Id;
-        await _dialogService.OpenAsync<ChangeStatusComponent>(_statusdialog);
-    }
+
 
     private async Task LoadDataAsync()
     {
