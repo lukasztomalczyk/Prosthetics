@@ -30,7 +30,7 @@ namespace Prosthetics.Features.AdditionalWorks
     public class AdditionalWorkDto : IRegister
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         public void Register(TypeAdapterConfig config)
         {

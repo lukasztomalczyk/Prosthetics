@@ -28,6 +28,7 @@ namespace Prosthetics.Features.Orders
         {
             var result = await _dbContext.Orders
                 .Include(_ => _.AdditionalWorks).Include(_ => _.Patient).Include(_ => _.OrderType)
+                .AsNoTracking()
                 .Where(_ => _.DoctorId == request.DoctorId).ToListAsync();
 
             return result.Adapt<IEnumerable<OrderDto>>();

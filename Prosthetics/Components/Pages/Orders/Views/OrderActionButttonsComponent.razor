@@ -1,12 +1,15 @@
-﻿@using Prosthetics.Common
+﻿@using MediatR
+@using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Dialog
 @using Prosthetics.Features
+@using Prosthetics.Features.Orders
 
 @inject DialogService _radzenDialogService
 @inject IDialogService _dialogService
 @inject IStore _store
+@inject IMediator _mediator
 
 <DialogComponent TComponent="ChangeStatusComponent" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
 
@@ -35,9 +38,9 @@
 
     protected async Task ClientDeleteButtonClick()
     {
-        await _dialogService.ConfirmAsync("Czy chcesz usunąć zamówienie?", "Usuń", () =>
+        await _dialogService.ConfirmAsync("Czy chcesz usunąć zamówienie?", "Usuń", async () =>
         {
-            Console.WriteLine();
+            await _mediator.Send(new DeleteOrderCommand() { OrderId = OrderId });
         });
     }
 
