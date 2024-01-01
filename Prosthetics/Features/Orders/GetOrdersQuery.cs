@@ -27,7 +27,7 @@ namespace Prosthetics.Features.Orders
         public async Task<IEnumerable<OrderDto>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
         {
             var result = await _dbContext.Orders
-                .Include(_ => _.AdditionalWorks).Include(_ => _.Patient).Include(_ => _.OrderType)
+                .Include(_ => _.AdditionalWorkCounts).ThenInclude(_ => _.AdditionalWork).Include(_ => _.Patient).Include(_ => _.OrderType)
                 .AsNoTracking()
                 .Where(_ => _.DoctorId == request.DoctorId).ToListAsync();
 
@@ -42,7 +42,7 @@ namespace Prosthetics.Features.Orders
         public required string OrderDate { get; set; }
         public required string DeadLine { get; set; }
         public required string Type { get; set; }
-        public List<AdditionalWorkDto> AdditionalWorks { get; set; } = new List<AdditionalWorkDto>();
+        public List<AdditionalWorkCountDto> AdditionalWorksCounts { get; set; } = new List<AdditionalWorkCountDto>();
         public int AdditionalWorksCount { get; set; }
         public string? Comments { get; set; }
         public required string ShortComment { get; set; }
@@ -58,7 +58,9 @@ namespace Prosthetics.Features.Orders
                 .Map(dest => dest.DeadLine, src => src.DeadLine.ToString("dd-MM-yyyy"))
                 .Map(dest => dest.Status, src => src.Status.GetStatus())
                 .Map(dest => dest.Type, src => src.OrderType != null ? src.OrderType.Name : string.Empty)
-                .Map(dest => dest.OrderStatusId, src => (int)src.Status);
+                .Map(dest => dest.OrderStatusId, src => (int)src.Status)
+                .Map(dest => dest.AdditionalWorksCounts, src => src.AdditionalWorkCounts)
+                .PreserveReference(true);
         }
     }
 }

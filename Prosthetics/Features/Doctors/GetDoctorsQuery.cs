@@ -23,6 +23,7 @@ namespace Prosthetics.Features.Doctors
         {
             // TODO do usuniecia
             _dbContext.Database.EnsureCreated();
+           // var test = await _dbContext.AdditionalWorkCounts.ToListAsync();
             var result = await _dbContext.Doctors.ToListAsync();
 
             return result.Adapt<IEnumerable<DoctorDto>>();

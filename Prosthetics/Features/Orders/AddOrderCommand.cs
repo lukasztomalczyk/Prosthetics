@@ -1,6 +1,9 @@
 ﻿using Mapster;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Prosthetics.Common;
+using Prosthetics.Components.Pages.Orders.Models;
+using Prosthetics.Features.AdditionalWorks;
 using Prosthetics.Models;
 using Prosthetics.Persistance;
 using Prosthetics.Persistance.Entities;
@@ -12,18 +15,15 @@ namespace Prosthetics.Features.Orders
         public int DoctorId { get; set; }
         public int PatientId { get; set; }
         public int OrderTypeId { get; set; }
-        public List<int> AdditionalWorksIds { get; set; }
+        public required List<AdditionalWorkCountDto> AdditionalWorks { get; init; }
         public DateTime DeadLine { get; set; }
-
-        public AddOrderCommand()
-        {
-            AdditionalWorksIds = new List<int>();
-        }
 
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<AddOrderCommand, Order>()
-                .Map(dest => dest.Status, src => OrderStatus.New);
+                .Map(dest => dest.Status, src => OrderStatus.New)
+                // TODO REMOVE
+                .PreserveReference(true);
         }
     }
 
@@ -40,15 +40,37 @@ namespace Prosthetics.Features.Orders
 
         public async Task<Unit> Handle(AddOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = request.Adapt<Order>();
+            Order order;
+            try
+            {
+                order = request.Adapt<Order>();
 
-            order.InsertedDate = _dateTime.Now();
-            order.AdditionalWorks = _dbContext.AdditionalWorks.Where(_ => request.AdditionalWorksIds.Contains(_.Id)).ToList();
+                order.InsertedDate = _dateTime.Now();
+                //order.AdditionalWorks.ForEach(_ =>
+                //{
+                //    _.Count = request.Ad
+                //});
+                order.AdditionalWorkCounts = request.AdditionalWorks.Select(_ => new AdditionalWorkCount() 
+                {
+                    Count = int.Parse(request.AdditionalWorks.First(x => x.Id == _.Id).Count),
+                    AdditionalWorkId = request.AdditionalWorks.First(x => x.Id == _.Id).Id
+                })
+                .ToList();
 
-            await _dbContext.Orders.AddAsync(order);
-            await _dbContext.SaveChangesAsync();
+                var entity = await _dbContext.Orders.AddAsync(order);
+                await _dbContext.SaveChangesAsync();
+                entity.State = EntityState.Detached;
+                await _dbContext.SaveChangesAsync();
 
             return Unit.Value;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+
         }
     }
 }

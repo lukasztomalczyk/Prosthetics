@@ -83,7 +83,7 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 1,
                             PatientId = patients[0].Id,
                             OrderTypeId = orderTypes[0].Id,
-                            AdditionalWorks = dbInMemory.AdditionalWorks.ToList(),
+                            AdditionalWorkCounts = dbInMemory.AdditionalWorks.ToList(),
                             InsertedDate = DateTime.Now,
                         },
                         new Order()
@@ -91,7 +91,7 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 2,
                             PatientId = patients[0].Id,
                             OrderTypeId = orderTypes[1].Id,
-                            AdditionalWorks= dbInMemory.AdditionalWorks.Where(_ => _.Id != 1).ToList(),
+                            AdditionalWorkCounts= dbInMemory.AdditionalWorks.Where(_ => _.Id != 1).ToList(),
                             InsertedDate = DateTime.Now,
                         }
                     }
@@ -108,7 +108,7 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 3,
                             PatientId = patients[1].Id,
                             OrderTypeId = orderTypes[1].Id,
-                            AdditionalWorks = dbInMemory.AdditionalWorks.Where(_ => _.Id != 2).ToList(),
+                            AdditionalWorkCounts = dbInMemory.AdditionalWorks.Where(_ => _.Id != 2).ToList(),
                             InsertedDate = DateTime.Now,
                         },
                         new Order() 

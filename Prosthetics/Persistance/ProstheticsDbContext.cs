@@ -11,6 +11,7 @@ namespace Prosthetics.Persistance
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderType> OrderTypes { get; set; }
         public DbSet<AdditionalWork> AdditionalWorks { get; set; }
+        public DbSet<AdditionalWorkCount> AdditionalWorkCounts { get; set; }
         public DbSet<Patient> Patients { get; set; }
 
         public ProstheticsDbContext(DbContextOptions<ProstheticsDbContext> options) 
@@ -32,8 +33,16 @@ namespace Prosthetics.Persistance
                 .HasConversion<int>();
 
             modelBuilder.Entity<Order>()
-                .HasMany(_ => _.AdditionalWorks)
+                .HasMany(_ => _.AdditionalWorkCounts)
                 .WithMany(_ => _.Orders);
+
+            modelBuilder.Entity<AdditionalWork>()
+                .HasMany(_ => _.AdditionalWorkCounts)
+                .WithOne(_ => _.AdditionalWork);
+
+            modelBuilder.Entity<AdditionalWorkCount>()
+                .HasOne(_ => _.AdditionalWork)
+                .WithMany(_ => _.AdditionalWorkCounts);
 
             //modelBuilder.Entity<AdditionalWorkOrder>()
             //    .Property(_ => _.OrdersId)
@@ -78,6 +87,8 @@ namespace Prosthetics.Persistance
                     Name = "Aparat Hyrax"
                 }
                 );
+
+
 
             modelBuilder.Entity<AdditionalWork>().HasData(
                 new AdditionalWork()
@@ -144,7 +155,8 @@ namespace Prosthetics.Persistance
                     OrderTypeId = 1,
                     Status = OrderStatus.Sent,
                     InsertedDate = DateTime.Now.AddDays(2),
-                    DeadLine = DateTime.Now.AddDays(9)
+                    DeadLine = DateTime.Now.AddDays(9),
+                    //AdditionalWorkCounts = new List<AdditionalWorkCount>() { new AdditionalWorkCount() { Id = 1, Count = 1, } }
                 });
         }
     }

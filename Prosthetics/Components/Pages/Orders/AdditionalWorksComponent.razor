@@ -1,6 +1,6 @@
 ﻿<h3>Dodatkowe zadania:</h3>
 <ul class="list-group">
-    @foreach (var item in AdditionalWorks)
+    @foreach (var item in AdditionalWorksCounts)
     {
         <li class="list-group-item">@item</li>
     }
@@ -11,5 +11,5 @@
     [Parameter]
     public EventCallback<string> OnCloseEvent { get; set; }
     [Parameter]
-    public IEnumerable<string> AdditionalWorks { get; set; }
+    public IEnumerable<string> AdditionalWorksCounts { get; set; } = new List<string>();
 }

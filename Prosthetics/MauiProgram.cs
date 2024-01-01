@@ -41,7 +41,7 @@ namespace Prosthetics
                 // (o => o.UseInMemoryDatabase("MyDatabase"));
                 (o =>
                 {
-                    o.UseSqlite("Filename=" + Path.Combine(FileSystem.Current.CacheDirectory, $"LocalDatabase-{AppInfo.Current.BuildString}.db"));
+                    o.UseSqlite("Filename=" + Path.Combine(FileSystem.Current.CacheDirectory, $"LocalDatabase-{AppInfo.Current.BuildString}1.db"));
                     o.EnableSensitiveDataLogging(true);
                 });
 

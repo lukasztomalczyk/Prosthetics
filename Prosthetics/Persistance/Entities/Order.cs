@@ -10,7 +10,7 @@ namespace Prosthetics.Persistance.Entities
         public OrderType OrderType { get; set; }
         //[NotMapped]
         //public List<AdditionalWorkOrder>? AdditionalWorkEntityOrders { get; } = new();
-        public List<AdditionalWork> AdditionalWorks { get; set; } = new();
+        public List<AdditionalWorkCount> AdditionalWorkCounts { get; set; } = new();
         public DateTime InsertedDate { get; set; }
         public DateTime DeadLine { get; set; }
         public string? Comments { get; set; }

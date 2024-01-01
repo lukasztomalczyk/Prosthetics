@@ -24,13 +24,13 @@ namespace Prosthetics.Features.Admin
         public async Task<IEnumerable<DoctorOrdersByPatientDto>> Handle(GetDoctorsOrdersByPatientQuery request, CancellationToken cancellationToken)
         {
             var result = await _dbContext.Orders
-                .Include(_ => _.AdditionalWorks).Include(_ => _.Doctor).Include(_ => _.OrderType).Include(_ => _.Patient)
+                .Include(_ => _.AdditionalWorkCounts).ThenInclude(_ => _.AdditionalWork).Include(_ => _.Doctor).Include(_ => _.OrderType).Include(_ => _.Patient)
                 .Where(_ => _.InsertedDate >= request.From && _.InsertedDate <= request.To)
                 .ToListAsync();
 
             var ordersByPatient = result.Select(_ =>
             {
-                var orders = _.AdditionalWorks.Select(x => x.Name).ToList();
+                var orders = _.AdditionalWorkCounts.Select(x => x.AdditionalWork.Name).ToList();
                 orders.Add(_.OrderType.Name);
 
                 return (Doctor: $"{_.Doctor.LastName} {_.Doctor.FirstName}", Patient: $"{_.Patient.LastName} {_.Patient.FirstName}", Orders: orders);

@@ -51,8 +51,8 @@
     private DateTime _selectedDeadLine;
     private int _orderTypeId = 1;
     private IEnumerable<OrderTypeDto>? _orderTypes;
-    private List<int>? _additionalWorkIds = new();
-    private IEnumerable<AdditionalWorkDto>? _additianalWorks;
+    private List<int> _additionalWorkIds = new();
+    private IEnumerable<AdditionalWorkCountDto> _additianalWorks = new List<AdditionalWorkCountDto>();
     private List<AdditionalWorkCountDto> _selectedAdditionalWorks = new List<AdditionalWorkCountDto>();
 
     protected DateTime GetTimeNow() => _dateTime.Now();
@@ -111,7 +111,7 @@
             DeadLine = _selectedDeadLine,
             DoctorId = _store.Order.DoctorId,
             OrderTypeId = _orderTypeId,
-            AdditionalWorksIds = _additionalWorkIds ?? new()
+            AdditionalWorks = _selectedAdditionalWorks
         });
 
         Thread.Sleep(100);
