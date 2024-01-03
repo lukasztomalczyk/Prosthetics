@@ -1,15 +1,98 @@
-﻿<h3>Dodatkowe zadania:</h3>
-<ul class="list-group">
-    @foreach (var item in AdditionalWorksCounts)
-    {
-        <li class="list-group-item">@item</li>
-    }
-</ul>
+﻿@using MediatR
+@using Prosthetics.Common
+@using Prosthetics.Components.Enums
+@using Prosthetics.Components.Layout
+@using Prosthetics.Features
+@using Prosthetics.Features.AdditionalWorks
+@using Prosthetics.Features.Orders
+@using Prosthetics.Features.Patients
+
+@inject IMediator _mediator;
+@inject NavigationManager _navManager
+@inject IStore _store;
+@inject DialogService _radzenDialogService
+@inject IDialogService _dialogService
+
+<RadzenLabel Text="Wybierz:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
+<RadzenDropDown @bind-Value=@_additionalWorkIds Change=@(args => OnChange(args)) Multiple=true 
+    Data=@_additianalWorks ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
+
 <br />
 
-@code {
+<RadzenDataList Data="@_selectedAdditionalWorks" TItem="AdditionalWorkCountDto">
+    <Template Context="product">
+        <RadzenRow Gap="0">
+            <RadzenColumn>
+                <RadzenText>@(product.Name)</RadzenText>
+            </RadzenColumn>
+            <RadzenColumn>
+                <ButtonComponent Text="-" Type="TypeOfButton.WARNING" OnButtonClick="@((args) => OnRemoveClick(product))" />
+                <RadzenTextBox Style="width: 50px" Disabled=true @bind-Value=@product.Count>@product.Count</RadzenTextBox>
+                <ButtonComponent Text="+" Type="TypeOfButton.SUCCESS" OnButtonClick="@((args) => OnAddClick(product))" />
+            </RadzenColumn>
+            </RadzenRow>
+    </Template>
+</RadzenDataList>
+
+<br />
+<ButtonComponent Text="Anuluj" OnButtonClick="OnCancelClick"></ButtonComponent>
+<ButtonComponent Text="Zapisz" OnButtonClick="OnSaveClick" Type="TypeOfButton.SUCCESS"></ButtonComponent>
+
+    @code {
     [Parameter]
-    public EventCallback<string> OnCloseEvent { get; set; }
+    public EventCallback<List<AdditionalWorkCountDto>> OnCloseEvent { get; set; }
+    // TODO zamiast tego trzeba uzyc _selectedAdditionalWorks
     [Parameter]
-    public IEnumerable<string> AdditionalWorksCounts { get; set; } = new List<string>();
+    public IEnumerable<AdditionalWorkCountDto> AdditionalWorksCounts { get; set; } = new List<AdditionalWorkCountDto>();
+
+    private List<AdditionalWorkCountDto> _selectedAdditionalWorks = new List<AdditionalWorkCountDto>();
+    private IEnumerable<AdditionalWorkCountDto> _additianalWorks = new List<AdditionalWorkCountDto>();
+    private List<int> _additionalWorkIds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _dialogService.Setup(_radzenDialogService);
+        _additianalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
+        OnChange(AdditionalWorksCounts.Select(_ => _.Id).ToList());
+        await base.OnInitializedAsync();
+    }
+
+    protected void OnChange(object selected)
+    {
+        _additionalWorkIds = ((IEnumerable<int>)selected).ToList();
+        _selectedAdditionalWorks.Clear();
+        _selectedAdditionalWorks.AddRange(_additianalWorks.Where(_ => _additionalWorkIds.Contains(_.Id))
+            .Select(_ => new AdditionalWorkCountDto()
+            {
+                Id = _.Id,
+                Name = _.Name,
+            }));
+    }
+
+    protected void OnAddClick(AdditionalWorkCountDto work)
+    {
+        CalculateCount(1, work.Id);
+    }
+
+    protected void OnRemoveClick(AdditionalWorkCountDto work)
+    {
+        CalculateCount(-1, work.Id);
+    }
+
+    private void CalculateCount(int value, int workId)
+    {
+        var workCount = _selectedAdditionalWorks.First(_ => _.Id == workId);
+
+        var result = (int.Parse(workCount.Count) + value);
+
+        workCount.Count = result < 0 ? "0" : result.ToString();
+    }
+
+    protected void OnSaveClick()
+    {
+        OnCloseEvent.InvokeAsync(_selectedAdditionalWorks);
+        _dialogService.Close();
+    }
+
+    protected void OnCancelClick() => _dialogService.Close();
 }

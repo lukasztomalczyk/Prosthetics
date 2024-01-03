@@ -30,6 +30,7 @@ namespace Prosthetics
             builder.Services.AddSingleton<IDialogService, WebDialogService>();
             builder.Services.AddSingleton<IJsonConverter, JsonConverter>();
             builder.Services.AddSingleton<IHttpRequestExecutor, HttpRequestExecutor>();
+            builder.Services.AddSingleton<INotificationService, CommonNotificationService>();
 
             builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
             builder.Services.AddSingleton<IStore, Store>();

@@ -18,6 +18,7 @@
         public string DoctorFullName { get; set; }
         public int OrderId { get; set; }
         public int StatusOrderId { get; set; }
+        public DateTime DeadLine { get; set; }
     }
 
     public class PatientStore

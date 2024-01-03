@@ -19,9 +19,9 @@
 
         public DialogConfig AddViewParameter(string key, object value)
         {
-            if (ViewParameters.TryGetValue(key, out object _value))
-                _value = value;
-            else
+            if (ViewParameters.TryGetValue(key, out _))
+                ViewParameters.Remove(key);
+
                 ViewParameters.TryAdd(key, value);
 
             return this;

@@ -1,12 +1,14 @@
 ﻿@page "/add-patient"
 
+@using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
 
 @inject IStore _store
 @inject NavigationManager _navManager
-@inject NotificationService _notificationService
+@* @inject NotificationService _notificationService *@
+@inject INotificationService _notificationService
 
 <h3>Dodaj pacjenta</h3>
 <RadzenLabel Text="Imię" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
@@ -30,12 +32,7 @@
         _store.Patient.FirstName = _firstName;
         _store.Patient.LastName = _lastName;
 
-        _notificationService.Notify(new NotificationMessage()
-            {
-                Severity = NotificationSeverity.Success,
-                Summary = "Pacjent utworzony poprawnie",
-                Duration = 4000
-            });
+        _notificationService.Success("Pacjent dodany poprawnie");
         _navManager.NavigateTo("/add-order");
     }
 }

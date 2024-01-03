@@ -14,11 +14,11 @@
                 <Template Context="context">
                     @if(temp.Template != null)
                     {
-                        @temp.Template.Invoke(context)
+                        @temp.Template?.Invoke(context)
                     }
                     else
                     {
-                        <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp.Display(context) </a>
+                        <a @onclick=@((args) => OnColClick(context, temp.Property))> @temp?.Display(context) </a>
                     }
                 </Template>
             </RadzenDataGridColumn>

@@ -11,7 +11,7 @@
 @inject IStore _store
 @inject IMediator _mediator
 
-<DialogComponent TComponent="ChangeStatusComponent" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
+<DialogComponent TComponent="ChangeStatusComponent" TReturn="string" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
 
 <div>
     <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>

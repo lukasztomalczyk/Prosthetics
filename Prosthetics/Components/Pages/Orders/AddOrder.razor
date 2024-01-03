@@ -4,6 +4,7 @@
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
+@using Prosthetics.Components.Models.Dialog
 @using Prosthetics.Components.Pages.Orders.Models
 @using Prosthetics.Features
 @using Prosthetics.Features.AdditionalWorks
@@ -14,109 +15,65 @@
 @inject IMediator _mediator;
 @inject IDateTime _dateTime;
 @inject IStore _store;
+@inject IDialogService _dialogService
+@inject DialogService _radzenDialogService
+@inject INotificationService _notificationSerivce
 
 <h3>Dodaj zamówienie dla pacjenta: @_store.Patient.LastName @_store.Patient.FirstName</h3>
 
 <RadzenLabel Text="Typ:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
 <RadzenDropDown @bind-Value=@_orderTypeId Data=@_orderTypes ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
 <br />
-<RadzenLabel Text="Dodatki:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
-<RadzenDropDown @bind-Value=@_additionalWorkIds Change=@(args => OnChange(args)) Multiple=true Data=@_additianalWorks ValueProperty="Id" TextProperty="Name" Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
-<br />
 <RadzenLabel Text="Data końcowa" Component="DatePickerHourFormat" Style="margin-right: 8px; vertical-align: middle;" />
-<RadzenDatePicker @bind-Value=@_selectedDeadLine ShowTime="false" DateFormat="dd-MM-yyyy" Name="DatePickerHourFormat" />
+<RadzenDatePicker @bind-Value=@_store.Order.DeadLine ShowTime="false" DateFormat="dd-MM-yyyy" Name="DatePickerHourFormat" />
 <br />
 <br />
 <ButtonComponent Text="Anuluj" OnButtonClick="OnCancelClick"></ButtonComponent>
-<ButtonComponent Text="Dodaj" OnButtonClick="AddOrderAsync" Type="TypeOfButton.SUCCESS"></ButtonComponent>
+<ButtonComponent Text="Dalej" OnButtonClick="OnNextClick" Type="TypeOfButton.SUCCESS"></ButtonComponent>
 <br />
-<br />
-<RadzenDataList Data="@_selectedAdditionalWorks" TItem="AdditionalWorkCountDto">
-    <Template Context="product">
-            <RadzenRow Gap="0">
-                <RadzenColumn>
-                    <RadzenText>@(product.Name)</RadzenText>
-                </RadzenColumn>
-                <RadzenColumn>
-                <ButtonComponent Text="-" Type="TypeOfButton.WARNING" OnButtonClick="@((args) => OnRemoveClick(product))" />
-                    <RadzenTextBox Style="width: 50px" Disabled=true @bind-Value=@product.Count>@product.Count</RadzenTextBox>
-                    <ButtonComponent Text="+" Type="TypeOfButton.SUCCESS" OnButtonClick="@((args) => OnAddClick(product))" />
-                </RadzenColumn>
-            </RadzenRow>
-    </Template>
-</RadzenDataList>
 
+<DialogComponent TComponent="AdditionalWorksComponent" TReturn="List<AdditionalWorkCountDto>" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
 
-    @code {
-    private DateTime _selectedDeadLine;
+@code {
     private int _orderTypeId = 1;
     private IEnumerable<OrderTypeDto>? _orderTypes;
-    private List<int> _additionalWorkIds = new();
-    private IEnumerable<AdditionalWorkCountDto> _additianalWorks = new List<AdditionalWorkCountDto>();
-    private List<AdditionalWorkCountDto> _selectedAdditionalWorks = new List<AdditionalWorkCountDto>();
 
-    protected DateTime GetTimeNow() => _dateTime.Now();
+    private DialogConfig _additionalWorksDialog = new DialogConfig("Dodatkowe zlecenia");
 
     protected override async Task OnInitializedAsync()
     {
-        _selectedDeadLine = _dateTime.Now();
+        _store.Order.DeadLine = _dateTime.Now();
+        _dialogService.Setup(_radzenDialogService);
         _orderTypes = await _mediator.Send(new GetOrderTypesQuery());
-        _additianalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
 
         await base.OnInitializedAsync();
     }
 
-    protected void OnAddClick(AdditionalWorkCountDto work)
+    protected async Task OnNextClick()
     {
-        CalculateCount(1, work.Id);
+        await _dialogService.OpenAsync<AdditionalWorksComponent>(_additionalWorksDialog);
     }
 
-    protected void OnRemoveClick(AdditionalWorkCountDto work)
+    protected async Task OnDialogClose(List<AdditionalWorkCountDto> additionalWorks)
     {
-        CalculateCount(-1, work.Id);
-    }
 
-    private void CalculateCount(int value, int workId)
-    {
-        var workCount = _selectedAdditionalWorks.First(_ => _.Id == workId);
-
-        var result = (int.Parse(workCount.Count) + value);
-
-        workCount.Count = result < 0 ? "0" : result.ToString();
-    }
-
-    protected void OnChange(object work)
-    {
-        var cast = (IEnumerable<int>)work;
-        _selectedAdditionalWorks.Clear();
-        _selectedAdditionalWorks.AddRange(_additianalWorks.Where(_ => cast.Contains(_.Id))
-            .Select(_ => new AdditionalWorkCountDto()
-            {
-                Id = _.Id,
-                Name = _.Name,
-            }));
-    }
-
-    protected async Task AddOrderAsync()
-    {
         var patientId = await _mediator.Send(new AddPatientCommand()
         {
-            FirstName =  _store.Patient.FirstName,
+            FirstName = _store.Patient.FirstName,
             LastName = _store.Patient.LastName
         });
 
         await _mediator.Send(new AddOrderCommand()
         {
             PatientId = patientId,
-            DeadLine = _selectedDeadLine,
+            DeadLine = _store.Order.DeadLine,
             DoctorId = _store.Order.DoctorId,
             OrderTypeId = _orderTypeId,
-            AdditionalWorks = _selectedAdditionalWorks
+            AdditionalWorks = additionalWorks
         });
-
-        Thread.Sleep(100);
-
-        _navManager.NavigateTo("/orders");
+        OnCancelClick();
+        Thread.Sleep(1000);
+        _notificationSerivce.Success("Dodano poprawnie zlecenie");
     }
 
     protected void OnCancelClick() => _navManager.NavigateTo("/orders");

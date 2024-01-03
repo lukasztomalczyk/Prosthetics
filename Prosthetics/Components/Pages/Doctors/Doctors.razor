@@ -2,9 +2,12 @@
 
 @using MediatR
 @using Microsoft.EntityFrameworkCore
+@using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Grid
+@using Prosthetics.Components.Pages.Doctors.DoctorsViews
+@using Prosthetics.Components.Pages.Doctors.Models
 @using Prosthetics.Features
 @using Prosthetics.Features.Doctors
 @using Prosthetics.Persistance
@@ -16,21 +19,18 @@
 
 <h3>Wybierz lekarza</h3>
 
-<GridComponent TData="DoctorDto" ColumnsDefinition="@_columns" Data="@_doctors" OnRowClickEvent="@(e => OnDoctorClick(e))"></GridComponent>
+<GridComponent TData="DoctorViewDto" ColumnsDefinition="@_columns" Data="@_doctors" OnRowClickEvent="@(e => OnDoctorClick(e))"></GridComponent>
 <br />
 
 <ButtonComponent Text="Dodaj lekarza" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 @code {
-    private IEnumerable<DoctorDto>? _doctors;
-    private ColumnInfo<DoctorDto>[] _columns = new ColumnInfo<DoctorDto>[]
-    {
-        new ColumnInfo<DoctorDto> { Title = "Imię i nazwisko", Property = "FullName", Display = _ => _.FullName }
-    };
+    private IEnumerable<DoctorViewDto>? _doctors;
+    private ColumnInfo<DoctorViewDto>[] _columns = new DoctorsGridConfig().Data;
 
     protected override async Task OnInitializedAsync()
     {
-        _doctors = await _mediator.Send(new GetDoctorsQuery());
+        _doctors = TransformDoctors(await _mediator.Send(new GetDoctorsQuery()));
 
         await base.OnInitializedAsync();
     }
@@ -41,6 +41,17 @@
         _store.Order.DoctorFullName = doctor.FullName;
 
         _navManager.NavigateTo($"/orders");
+    }
+
+    private IEnumerable<DoctorViewDto> TransformDoctors(IEnumerable<DoctorDto> list)
+    {
+        return list.Select(_ => new DoctorViewDto()
+        {
+            Id = _.Id,
+            FullName = _.FullName,
+            Actions = RenderHelper.Generate<DoctorActionButtonsComponent>(
+                new RenderComponentData("DoctorId", _.Id))
+        });
     }
 
     private void OnAddButtonClicked() => _navManager.NavigateTo("/add-doctor");

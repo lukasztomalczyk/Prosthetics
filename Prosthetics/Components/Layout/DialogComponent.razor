@@ -1,11 +1,13 @@
 ﻿@using Prosthetics.Components.Models.Dialog
+
 @inject DialogService _dialogService
 
 @typeparam TComponent where TComponent : ComponentBase
+@typeparam TReturn
 
 @code {
     [Parameter]
-    public EventCallback<string> OnCloseEvent { get; set; } = new EventCallback<string>();
+    public EventCallback<TReturn> OnCloseEvent { get; set; } = new EventCallback<TReturn>();
     [Parameter]
     public DialogConfig? Setup { get; set; }
 
@@ -15,6 +17,4 @@
         await base.OnInitializedAsync();
         Setup.AddViewParameter(nameof(OnCloseEvent), OnCloseEvent);
     }
-
-    public Action<dynamic> DialogCloseEventHandler() => (dynamic param) => { OnCloseEvent.InvokeAsync(typeof(TComponent).Name); };
 }

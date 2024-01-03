@@ -1,0 +1,32 @@
+﻿@using MediatR
+@using Prosthetics.Common
+@using Prosthetics.Components.Enums
+@using Prosthetics.Components.Layout
+@using Prosthetics.Features.Doctors
+
+@inject IDialogService _dialogService
+@inject DialogService _radzenDialogService
+@inject IMediator _mediator
+
+<ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@OnDoctorDeleteButtonClick"></ButtonComponent>
+
+@code {
+    [Parameter]
+    public required int DoctorId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _dialogService.Setup(_radzenDialogService);
+
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task OnDoctorDeleteButtonClick()
+    {
+        await _dialogService.ConfirmAsync("Czy chcesz usunąć lekarza?", "Usuń", async () =>
+        {
+            await _mediator.Send(new DeleteDoctorCommand() { });
+        });
+    }
+}

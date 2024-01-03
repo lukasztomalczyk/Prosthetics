@@ -9,6 +9,7 @@
 @using Prosthetics.Components.Pages.Orders.Models
 @using Prosthetics.Components.Pages.Orders.Views
 @using Prosthetics.Features
+@using Prosthetics.Features.AdditionalWorks
 @using Prosthetics.Features.Orders
 @using Prosthetics.Persistance
 @using Prosthetics.Persistance.Entities
@@ -26,8 +27,8 @@
 <br />
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
-<DialogComponent TComponent="Comment" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
-<DialogComponent TComponent="AdditionalWorksComponent" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
+<DialogComponent TComponent="Comment" TReturn="string" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
+<DialogComponent TComponent="AdditionalWorksComponent" TReturn="List<AdditionalWorkCountDto>" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
 
 @code {
     [Parameter]
@@ -57,7 +58,7 @@
 
     private async Task OnColClick(ColEvent<OrderViewDto> context)
     {
-        if (context.ColumnName == "ShortComment")
+        if (context.ColumnName == nameof(context.Data.ShortComment))
             await ShowCommentDialog(context.Data);
         else
             await ShowAdditionalWorksDialog(context.Data);
@@ -66,7 +67,7 @@
     private async Task ShowAdditionalWorksDialog(OrderViewDto order)
     {
         //_additionalWorksDialog.ClearViewParameters();
-        _additionalWorksDialog.AddViewParameter(nameof(order.AdditionalWorksCounts), order.AdditionalWorksCounts.Select(_ => _.Name));
+        _additionalWorksDialog.AddViewParameter(nameof(order.AdditionalWorksCounts), order.AdditionalWorksCounts);
 
         await _dialogService.OpenAsync<AdditionalWorksComponent>(_additionalWorksDialog);
     }
@@ -122,7 +123,11 @@
             Comments = _.Comments,
             ShortComment = _.ShortComment,
             OrderStatusId = _.OrderStatusId,
-            Actions = GenerateActionButtonsView(_)
+            //Actions = GenerateActionButtonsView(_)
+                Actions = RenderHelper.Generate<OrderActionButttonsComponent<OrderViewDto>, OrderDto>(
+                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.Data), _),
+                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderId), _.Id),
+                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderStatusId), _.OrderStatusId))
         })
         .ToList();
     }
