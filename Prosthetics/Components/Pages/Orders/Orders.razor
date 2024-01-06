@@ -1,5 +1,6 @@
 ﻿@page "/orders"
 
+@using Mapster
 @using MediatR
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
@@ -28,7 +29,7 @@
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 <DialogComponent TComponent="Comment" TReturn="string" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
-<DialogComponent TComponent="AdditionalWorksComponent" TReturn="List<AdditionalWorkCountDto>" OnCloseEvent="OnDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
+<DialogComponent TComponent="AdditionalWorksComponent" TReturn="List<AdditionalWorkCountDto>" OnCloseEvent="OnAdditionalWorksDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
 
 @code {
     [Parameter]
@@ -67,12 +68,11 @@
     private async Task ShowAdditionalWorksDialog(OrderViewDto order)
     {
         //_additionalWorksDialog.ClearViewParameters();
-        _additionalWorksDialog.AddViewParameter(nameof(order.AdditionalWorksCounts), order.AdditionalWorksCounts);
+        _additionalWorksDialog.AddViewParameter(nameof(AdditionalWorksComponent.AdditionalWorksCounts), order.AdditionalWorksCounts);
+        _additionalWorksDialog.AddViewParameter(nameof(AdditionalWorksComponent.OrderId), order.Id);
 
         await _dialogService.OpenAsync<AdditionalWorksComponent>(_additionalWorksDialog);
     }
-
-
 
     private async Task LoadDataAsync()
     {
@@ -97,6 +97,17 @@
         _dialogService.Close();
     }
 
+    private async Task OnAdditionalWorksDialogClose(List<AdditionalWorkCountDto> additionalWorks)
+    {
+        await _mediator.Send(new UpdateAdditionalWorksCommand()
+        {
+            OrderId = _store.Order.OrderId,
+            AdditionalCountWorks = additionalWorks.Adapt<IEnumerable<EditedAdditionalCountWorkDto>>()
+        });
+        await LoadDataAsync();
+        await _orderGrid.RefreshDataAsync();
+    }
+
     private void OnAddButtonClicked() => _navManager.NavigateTo("/add-patient");
 
     private IEnumerable<OrderViewDto> TransformData(List<OrderDto> list)
@@ -110,7 +121,7 @@
                 _.ShortComment = string.IsNullOrEmpty(_.Comments) ? "..." : _.Comments;
         });
 
-        return list.Select(_ => new OrderViewDto()
+        var mappedOrders = list.Select(_ => new OrderViewDto()
         {
             Id = _.Id,
             PatientFullName = _.PatientFullName,
@@ -122,14 +133,16 @@
             AdditionalWorksCount = _.AdditionalWorksCount,
             Comments = _.Comments,
             ShortComment = _.ShortComment,
-            OrderStatusId = _.OrderStatusId,
-            //Actions = GenerateActionButtonsView(_)
-                Actions = RenderHelper.Generate<OrderActionButttonsComponent<OrderViewDto>, OrderDto>(
-                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.Data), _),
-                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderId), _.Id),
-                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderStatusId), _.OrderStatusId))
+            OrderStatusId = _.OrderStatusId
         })
         .ToList();
+
+        mappedOrders.ForEach(_ => _.Actions = RenderHelper.Generate<OrderActionButttonsComponent<OrderViewDto>, OrderViewDto>(
+                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.Data), _),
+                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderId), _.Id),
+                    new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderStatusId), _.OrderStatusId)));
+
+        return mappedOrders;
     }
 
     private RenderFragment GenerateActionButtonsView(OrderDto order) => builder =>

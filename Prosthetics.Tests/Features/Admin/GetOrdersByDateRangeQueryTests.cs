@@ -83,7 +83,27 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 1,
                             PatientId = patients[0].Id,
                             OrderTypeId = orderTypes[0].Id,
-                            AdditionalWorkCounts = dbInMemory.AdditionalWorks.ToList(),
+                            AdditionalWorkCounts = new List<AdditionalWorkCount>()
+                            {
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 5,
+                                    Count = 1,
+                                    AdditionalWorkId = 1,
+                                },
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 6,
+                                    Count = 1,
+                                    AdditionalWorkId = 2,
+                                },
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 7,
+                                    Count = 1,
+                                    AdditionalWorkId = 3,
+                                },
+                            },
                             InsertedDate = DateTime.Now,
                         },
                         new Order()
@@ -91,7 +111,22 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 2,
                             PatientId = patients[0].Id,
                             OrderTypeId = orderTypes[1].Id,
-                            AdditionalWorkCounts= dbInMemory.AdditionalWorks.Where(_ => _.Id != 1).ToList(),
+                            AdditionalWorkCounts = new List<AdditionalWorkCount>()
+                            {
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 3,
+                                    Count = 1,
+                                    AdditionalWorkId = 2,
+                                },
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 4,
+                                    Count = 1,
+                                    AdditionalWorkId = 3,
+                                },
+                            },
+                            //dbInMemory.AdditionalWorks.Where(_ => _.Id != 1).ToList(),
                             InsertedDate = DateTime.Now,
                         }
                     }
@@ -108,7 +143,22 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 3,
                             PatientId = patients[1].Id,
                             OrderTypeId = orderTypes[1].Id,
-                            AdditionalWorkCounts = dbInMemory.AdditionalWorks.Where(_ => _.Id != 2).ToList(),
+                             //dbInMemory.AdditionalWorks.Where(_ => _.Id != 2).ToList(),
+                            AdditionalWorkCounts = new List<AdditionalWorkCount>()
+                            {
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 1,
+                                    Count = 1,
+                                    AdditionalWorkId = 1,
+                                },
+                                new AdditionalWorkCount()
+                                {
+                                    Id = 2,
+                                    Count = 1,
+                                    AdditionalWorkId = 3,
+                                },
+                            },
                             InsertedDate = DateTime.Now,
                         },
                         new Order() 

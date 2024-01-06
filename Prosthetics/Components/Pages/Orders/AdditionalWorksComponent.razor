@@ -40,6 +40,8 @@
 
     @code {
     [Parameter]
+    public int OrderId { get; set; }
+    [Parameter]
     public EventCallback<List<AdditionalWorkCountDto>> OnCloseEvent { get; set; }
     // TODO zamiast tego trzeba uzyc _selectedAdditionalWorks
     [Parameter]
@@ -53,7 +55,10 @@
     {
         _dialogService.Setup(_radzenDialogService);
         _additianalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
-        OnChange(AdditionalWorksCounts.Select(_ => _.Id).ToList());
+        //OnChange(AdditionalWorksCounts.Select(_ => _.Id).ToList());
+        _selectedAdditionalWorks.Clear();
+        _selectedAdditionalWorks.AddRange(AdditionalWorksCounts);
+        _additionalWorkIds = AdditionalWorksCounts.Select(_ => _.Id).ToList();
         await base.OnInitializedAsync();
     }
 
@@ -66,6 +71,7 @@
             {
                 Id = _.Id,
                 Name = _.Name,
+                Count = AdditionalWorksCounts.FirstOrDefault(x => x.Id == _.Id)?.Count ?? "0"
             }));
     }
 
@@ -90,6 +96,7 @@
 
     protected void OnSaveClick()
     {
+        _store.Order.OrderId = OrderId;
         OnCloseEvent.InvokeAsync(_selectedAdditionalWorks);
         _dialogService.Close();
     }

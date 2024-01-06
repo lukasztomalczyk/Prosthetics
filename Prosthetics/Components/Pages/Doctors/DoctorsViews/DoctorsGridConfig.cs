@@ -9,8 +9,8 @@ namespace Prosthetics.Components.Pages.Doctors.DoctorsViews
         public DoctorsGridConfig()
             : base(
                 [
-                    new ColumnInfo<DoctorViewDto> { Title = "Imię i nazwisko", Property = "FullName", Display = _ => _.FullName, UseTemplate = false },
-                    new ColumnInfo<DoctorViewDto> { Title = "Usuń", Property = "FullName", UseTemplate = true, Template = _ => _.Actions }
+                    new ColumnInfo<DoctorViewDto> { Title = "Imię i nazwisko", Property = "FullName", Display = _ => _.FullName },
+                    new ColumnInfo<DoctorViewDto> { Title = "Usuń", Property = "FullName", Template = _ => _.Actions }
                 ]
             )
         { }

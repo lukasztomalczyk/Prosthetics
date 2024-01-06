@@ -5,6 +5,6 @@ namespace Prosthetics.Components.Pages.Orders.Models
 {
     public class OrderViewDto : OrderDto
     {
-        public required RenderFragment Actions { get; init; }
+        public RenderFragment Actions { get; set; }
     }
 }

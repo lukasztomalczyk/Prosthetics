@@ -9,12 +9,12 @@ namespace Prosthetics.Common
         public static RenderFragment Generate<TComponent, TType>(params RenderComponentData[] componentParams)
            where TComponent : ComponentBase
             {
-                var genericType = typeof(OrderActionButttonsComponent<>);
-                // var genericType = typeof(TComponent);
+                //var genericType = typeof(OrderActionButttonsComponent<>);
+                var genericType = typeof(TComponent);
                 var argumentType = typeof(TType);
-                var type = genericType.MakeGenericType(argumentType);
+               // var type = genericType.MakeGenericType(argumentType);
 
-                return BuildComponent(type, componentParams);
+                return BuildComponent(genericType, componentParams);
             }
 
         public static RenderFragment Generate<TComponet>(params RenderComponentData[] componentParams)
