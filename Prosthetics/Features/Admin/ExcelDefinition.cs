@@ -46,12 +46,26 @@ namespace Prosthetics.Features.Admin
                 orderByPatient = _patientsOrders.ElementAt(i);
                 _worksheet.Cell(i + 2, 2).Value = orderByPatient.PatientFullName;
 
-                for (int j = 0; j < _headersWithColNumber.Count(); j++)
+                for (int j = 0; j < _headersWithColNumber?.Count(); j++)
                 {
                     header = _headersWithColNumber.ElementAt(j);
                     _worksheet.Cell(i + 2, header.Value).Value = orderByPatient.Orders.Any(_ => _.OrderName == header.Key)
                         ? orderByPatient.Orders.First(_ => _.OrderName == header.Key).Count : 0;
                 }
+            }
+
+            return this;
+        }
+
+        public ExcelDefinition AddSummary(IEnumerable<OrderCountDto> summary)
+        {
+            var summaryRowIndex = _patientsOrders.Count() + 3;
+            _worksheet.Cell(summaryRowIndex, 1).Value = "Podsumowanie:";
+
+            foreach (var header in _headersWithColNumber ?? new Dictionary<string, int>())
+            {
+                _worksheet.Cell(summaryRowIndex, header.Value).Value = 
+                    summary.FirstOrDefault(_ => _.OrderName == header.Key)?.Count ?? 0;
             }
 
             return this;

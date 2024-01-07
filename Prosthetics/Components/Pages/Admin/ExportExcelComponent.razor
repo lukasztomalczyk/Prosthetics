@@ -51,7 +51,7 @@ do:
             _excelExporter.AddWorksheet(doctorOrders.DoctorFullName);
             _excelExporter.SetDataForWorksheet(doctorOrders.DoctorFullName, excel =>
             {
-                new ExcelDefinition(excel, doctorOrders.OrdersByPatients, headers).AddHeaders().AddRows();
+                new ExcelDefinition(excel, doctorOrders.OrdersByPatients, headers).AddHeaders().AddRows().AddSummary(doctorOrders.Summary);
             });
         }
 

@@ -54,7 +54,17 @@ namespace Prosthetics.Features.Admin
                     })
                 })
 
-            });
+            }).ToList();
+
+            foreach (var doctorOrders in mappedResult)
+            {
+                 doctorOrders.Summary.AddRange(doctorOrders.OrdersByPatients.SelectMany(_ => _.Orders).GroupBy(_ => _.OrderName, _ => _)
+                    .ToDictionary(_ => _.Key, _ => _.Sum(x => x.Count)).Select(_ => new OrderCountDto()
+                    { 
+                        OrderName = _.Key,
+                        Count = _.Value
+                    }));
+            }
 
             return mappedResult;
         }
@@ -70,6 +80,12 @@ namespace Prosthetics.Features.Admin
     {
         public required string DoctorFullName { get; init; }
         public IEnumerable<ParientOrdersDto> OrdersByPatients { get; set; } = new List<ParientOrdersDto>();
+        public List<OrderCountDto> Summary { get; set; } = new List<OrderCountDto>();
+    }
+
+    public class OrdersSummaryDto
+    {
+        public IEnumerable<OrderCountDto> SummaryPerOrderNames { get; set; } = new List<OrderCountDto>();
     }
 
     public class OrderCountDto

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Prosthetics.Features.Admin;
 using Prosthetics.Persistance.Entities;
@@ -221,6 +222,12 @@ namespace Prosthetics.Tests.Features.Admin
                                 }
                             }
                         },
+                    },
+                    Summary = new List<OrderCountDto>()
+                    { 
+                        new OrderCountDto() { OrderName = "Główny typ 2", Count = 2 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 1", Count = 1 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 3", Count = 1 },
                     }
                 },
                 new DoctorOrdersByPatientDto()
@@ -260,6 +267,14 @@ namespace Prosthetics.Tests.Features.Admin
                                 },
                             }
                         }
+                    },
+                    Summary = new List<OrderCountDto>()
+                    {
+                        new OrderCountDto() { OrderName = "Główny typ 1", Count = 1 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 1", Count = 1 },
+                        new OrderCountDto() { OrderName = "Główny typ 2", Count = 1 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 3", Count = 2 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 2", Count = 2 },
                     }
                 },
             };
