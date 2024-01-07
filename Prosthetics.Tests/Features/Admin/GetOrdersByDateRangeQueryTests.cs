@@ -89,19 +89,19 @@ namespace Prosthetics.Tests.Features.Admin
                                 new AdditionalWorkCount()
                                 {
                                     Id = 5,
-                                    Count = 1,
+                                    Count = 2,
                                     AdditionalWorkId = 1,
                                 },
                                 new AdditionalWorkCount()
                                 {
                                     Id = 6,
-                                    Count = 1,
+                                    Count = 3,
                                     AdditionalWorkId = 2,
                                 },
                                 new AdditionalWorkCount()
                                 {
                                     Id = 7,
-                                    Count = 1,
+                                    Count = 4,
                                     AdditionalWorkId = 3,
                                 },
                             },
@@ -117,13 +117,13 @@ namespace Prosthetics.Tests.Features.Admin
                                 new AdditionalWorkCount()
                                 {
                                     Id = 3,
-                                    Count = 1,
+                                    Count = 2,
                                     AdditionalWorkId = 2,
                                 },
                                 new AdditionalWorkCount()
                                 {
                                     Id = 4,
-                                    Count = 1,
+                                    Count = 2,
                                     AdditionalWorkId = 3,
                                 },
                             },
@@ -144,13 +144,12 @@ namespace Prosthetics.Tests.Features.Admin
                             Id = 3,
                             PatientId = patients[1].Id,
                             OrderTypeId = orderTypes[1].Id,
-                             //dbInMemory.AdditionalWorks.Where(_ => _.Id != 2).ToList(),
                             AdditionalWorkCounts = new List<AdditionalWorkCount>()
                             {
                                 new AdditionalWorkCount()
                                 {
                                     Id = 1,
-                                    Count = 1,
+                                    Count = 2,
                                     AdditionalWorkId = 1,
                                 },
                                 new AdditionalWorkCount()
@@ -186,9 +185,9 @@ namespace Prosthetics.Tests.Features.Admin
                 new DoctorOrdersByPatientDto()
                 {
                     DoctorFullName = "Kowalski Damian",
-                    OrdersByPatients = new List<ParientOrdersDto>()
+                    OrdersByPatients = new List<PatientOrdersDto>()
                     {
-                        new ParientOrdersDto()
+                        new PatientOrdersDto()
                         {
                             PatientFullName = "Jarosz Rafał",
                             Orders = new List<OrderCountDto>()
@@ -200,7 +199,7 @@ namespace Prosthetics.Tests.Features.Admin
                                 }
                             },
                         },
-                        new ParientOrdersDto()
+                        new PatientOrdersDto()
                         {
                             PatientFullName = "Duda Damian",
                             Orders = new List<OrderCountDto>()
@@ -213,7 +212,7 @@ namespace Prosthetics.Tests.Features.Admin
                                 new OrderCountDto()
                                 {
                                     OrderName = "Dodatkowe zlecenie 1",
-                                    Count = 1
+                                    Count = 2
                                 },
                                 new OrderCountDto()
                                 {
@@ -226,16 +225,16 @@ namespace Prosthetics.Tests.Features.Admin
                     Summary = new List<OrderCountDto>()
                     { 
                         new OrderCountDto() { OrderName = "Główny typ 2", Count = 2 },
-                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 1", Count = 1 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 1", Count = 2 },
                         new OrderCountDto() { OrderName = "Dodatkowe zlecenie 3", Count = 1 },
                     }
                 },
                 new DoctorOrdersByPatientDto()
                 {
                     DoctorFullName = "Kowalczyk Łukasz",
-                    OrdersByPatients = new List<ParientOrdersDto>()
+                    OrdersByPatients = new List<PatientOrdersDto>()
                     {
-                        new ParientOrdersDto()
+                        new PatientOrdersDto()
                         {
                             PatientFullName = "Stanowski Krzysztof",
                             Orders = new List<OrderCountDto>()
@@ -248,8 +247,25 @@ namespace Prosthetics.Tests.Features.Admin
                                 new OrderCountDto()
                                 {
                                     OrderName = "Dodatkowe zlecenie 1",
-                                    Count = 1
+                                    Count = 2
                                 },
+                                new OrderCountDto()
+                                {
+                                    OrderName = "Dodatkowe zlecenie 3",
+                                    Count = 4
+                                },
+                                new OrderCountDto()
+                                {
+                                    OrderName = "Dodatkowe zlecenie 2",
+                                    Count = 3
+                                },
+                            }
+                        },
+                        new PatientOrdersDto()
+                        {
+                            PatientFullName = "Stanowski Krzysztof",
+                            Orders = new List<OrderCountDto>()
+                            {
                                 new OrderCountDto()
                                 {
                                     OrderName = "Główny typ 2",
@@ -271,10 +287,10 @@ namespace Prosthetics.Tests.Features.Admin
                     Summary = new List<OrderCountDto>()
                     {
                         new OrderCountDto() { OrderName = "Główny typ 1", Count = 1 },
-                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 1", Count = 1 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 1", Count = 2 },
                         new OrderCountDto() { OrderName = "Główny typ 2", Count = 1 },
-                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 3", Count = 2 },
-                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 2", Count = 2 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 3", Count = 6 },
+                        new OrderCountDto() { OrderName = "Dodatkowe zlecenie 2", Count = 5 },
                     }
                 },
             };

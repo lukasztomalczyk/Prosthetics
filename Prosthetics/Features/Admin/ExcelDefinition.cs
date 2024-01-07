@@ -5,11 +5,11 @@ namespace Prosthetics.Features.Admin
     public class ExcelDefinition
     {
         private readonly IXLWorksheet _worksheet;
-        private readonly IEnumerable<ParientOrdersDto> _patientsOrders;
+        private readonly IEnumerable<PatientOrdersDto> _patientsOrders;
         private readonly IEnumerable<string> _headers;
         private Dictionary<string, int>? _headersWithColNumber;
 
-        public ExcelDefinition(IXLWorksheet worksheet, IEnumerable<ParientOrdersDto> doctorsOrders, 
+        public ExcelDefinition(IXLWorksheet worksheet, IEnumerable<PatientOrdersDto> doctorsOrders, 
             IEnumerable<string> headers)
         {
             _worksheet = worksheet;
@@ -38,7 +38,7 @@ namespace Prosthetics.Features.Admin
 
         public ExcelDefinition AddRows()
         {
-            ParientOrdersDto orderByPatient;
+            PatientOrdersDto orderByPatient;
             KeyValuePair<string, int> header;
 
             for (int i = 0; i < _patientsOrders.Count(); i++)

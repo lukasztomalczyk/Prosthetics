@@ -30,56 +30,61 @@ namespace Prosthetics.Features.Admin
 
             var ordersByPatient = result.Select(_ =>
             {
-                var orders = _.AdditionalWorkCounts.Select(x => x.AdditionalWork.Name).ToList();
-                orders.Add(_.OrderType.Name);
+                var orders = _.AdditionalWorkCounts.Select(x => new OrderCountDto { OrderName = x.AdditionalWork.Name, Count = x.Count }).ToList();
+                orders.Add(new OrderCountDto() { OrderName = _.OrderType.Name, Count = 1 });
 
-                return (Doctor: $"{_.Doctor.LastName} {_.Doctor.FirstName}", Patient: $"{_.Patient.LastName} {_.Patient.FirstName}", Orders: orders);
+                return new DoctorPatientAndOrdersDto()
+                {
+                    Doctor = $"{_.Doctor.LastName} {_.Doctor.FirstName}",
+                    PatientFullName = $"{_.Patient.LastName} {_.Patient.FirstName}",
+                    Orders = orders
+                };
             });
 
-            var groupByDoctor = ordersByPatient.GroupBy(_ => _.Doctor, _ => (Patient: _.Patient, Orders: _.Orders)).ToList();
+            var groupByDoctor = ordersByPatient.GroupBy(_ => _.Doctor, _ => new PatientOrdersDto()
+            {
+                PatientFullName = _.PatientFullName,
+                Orders = _.Orders
+            })
 
-            var groupedByDoctorAndByPatient = groupByDoctor.GroupBy(_ => _.Key, _ => _.GroupBy(x => x.Patient, y => y.Orders)
-                .ToDictionary(z => z.Key, z => z.ToList())).ToDictionary(_ => _.Key, _ => _.SelectMany(_ => _).ToList());
-
-            var mappedResult = groupedByDoctorAndByPatient.Select(_ => new DoctorOrdersByPatientDto
+            .ToDictionary(_ => _.Key, _ => _.ToList())
+            .Select(_ => new DoctorOrdersByPatientDto()
             {
                 DoctorFullName = _.Key,
-                OrdersByPatients = _.Value.Select(x => new ParientOrdersDto()
-                { 
-                    PatientFullName = x.Key,
-                    Orders = x.Value.SelectMany(y => y).GroupBy(y => y).ToDictionary(y => y.Key, y => y.Count()).Select(_ => new OrderCountDto()
-                    { 
-                        OrderName = _.Key,
-                        Count = _.Value
-                    })
-                })
+                OrdersByPatients = _.Value
 
             }).ToList();
 
-            foreach (var doctorOrders in mappedResult)
+            foreach (var doctorOrders in groupByDoctor)
             {
-                 doctorOrders.Summary.AddRange(doctorOrders.OrdersByPatients.SelectMany(_ => _.Orders).GroupBy(_ => _.OrderName, _ => _)
-                    .ToDictionary(_ => _.Key, _ => _.Sum(x => x.Count)).Select(_ => new OrderCountDto()
-                    { 
-                        OrderName = _.Key,
-                        Count = _.Value
-                    }));
+                doctorOrders.Summary.AddRange(doctorOrders.OrdersByPatients.SelectMany(_ => _.Orders).GroupBy(_ => _.OrderName, _ => _)
+                   .ToDictionary(_ => _.Key, _ => _.Sum(x => x.Count)).Select(_ => new OrderCountDto()
+                   {
+                       OrderName = _.Key,
+                       Count = _.Value
+                   }));
             }
 
-            return mappedResult;
+            return groupByDoctor;
         }
     }
 
-    public class ParientOrdersDto
+    public class PatientOrdersDto
     {
         public required string PatientFullName { get; init; }
         public IEnumerable<OrderCountDto> Orders { get; set; } = new List<OrderCountDto>();
     }
 
+    internal class DoctorPatientAndOrdersDto : PatientOrdersDto
+    {
+        public string Doctor { get; set; }
+
+    }
+
     public class DoctorOrdersByPatientDto
     {
         public required string DoctorFullName { get; init; }
-        public IEnumerable<ParientOrdersDto> OrdersByPatients { get; set; } = new List<ParientOrdersDto>();
+        public IEnumerable<PatientOrdersDto> OrdersByPatients { get; set; } = new List<PatientOrdersDto>();
         public List<OrderCountDto> Summary { get; set; } = new List<OrderCountDto>();
     }
 
