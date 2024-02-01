@@ -1,5 +1,4 @@
-﻿using FileContextCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Prosthetics.Models;
 using Prosthetics.Persistance.Entities;
 
@@ -44,29 +43,21 @@ namespace Prosthetics.Persistance
                 .HasOne(_ => _.AdditionalWork)
                 .WithMany(_ => _.AdditionalWorkCounts);
 
-            //modelBuilder.Entity<AdditionalWorkOrder>()
-            //    .Property(_ => _.OrdersId)
-            //    .is
-
-            //modelBuilder.Entity<Order>()
-            //    .HasMany(_ => _.AdditionalWorks)
-            //    .WithMany(_ => _.Orders)
-            //    .UsingEntity(_ => _.HasData(
-            //        new AdditionalWorkOrder()
-            //        {
-            //            Id = 1,
-            //            AdditionalWorksId = 1,
-            //            OrdersId = 1,
-            //        }
-            //        ));
-
-            modelBuilder.Entity<Patient>()
-                .HasData(
-                new Patient()
-                { 
+            modelBuilder.Entity<AdditionalWork>().HasData(
+                new AdditionalWork()
+                {
                     Id = 1,
-                    FirstName = "Krzysiek",
-                    LastName = "Kasprowicz"
+                    Name = "Akrylowe powierzchnie nagryzowe"
+                },
+                new AdditionalWork()
+                {
+                    Id = 2,
+                    Name = "Dodatkowa śruba"
+                },
+                new AdditionalWork()
+                {
+                    Id = 3,
+                    Name = "Dodatkowe elementy druciane"
                 });
 
             modelBuilder.Entity<OrderType>()
@@ -89,23 +80,18 @@ namespace Prosthetics.Persistance
                 );
 
 
+            //SeedData(modelBuilder);
+        }
 
-            modelBuilder.Entity<AdditionalWork>().HasData(
-                new AdditionalWork()
-                {
-                    Id = 1,
-                    Name = "Akrylowe powierzchnie nagryzowe"
-                },
-                new AdditionalWork()
-                {
-                    Id = 2,
-                    Name = "Dodatkowa śruba"
-                },
-                new AdditionalWork()
-                {
-                    Id = 3,
-                    Name = "Dodatkowe elementy druciane"
-                });
+        private void SeedData(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Patient>().HasData(
+               new Patient()
+               {
+                   Id = 1,
+                   FirstName = "Krzysiek",
+                   LastName = "Kasprowicz"
+               });
 
             modelBuilder.Entity<Doctor>().HasData(
                 new Doctor()

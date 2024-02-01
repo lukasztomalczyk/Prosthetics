@@ -1,1 +1,19 @@
 ﻿@page "/"
+
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        
+        // Persmission
+        PermissionStatus writeStatus = Permissions.CheckStatusAsync<Permissions.StorageWrite>().Result;
+        PermissionStatus readStatus = Permissions.CheckStatusAsync<Permissions.StorageRead>().Result;
+
+        if (writeStatus != PermissionStatus.Granted || readStatus != PermissionStatus.Granted)
+        {
+            await Permissions.RequestAsync<Permissions.StorageRead>();
+            await Permissions.RequestAsync<Permissions.StorageWrite>();
+        }
+    }
+}

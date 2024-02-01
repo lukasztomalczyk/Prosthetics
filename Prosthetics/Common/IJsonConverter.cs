@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace Prosthetics.Common
 {
@@ -10,17 +10,17 @@ namespace Prosthetics.Common
 
     public class JsonConverter : IJsonConverter
     {
-        private readonly JsonSerializerSettings _settings;
+        private readonly JsonSerializerOptions _settings;
 
-        public JsonConverter(JsonSerializerSettings settings)
+        public JsonConverter(JsonSerializerOptions settings)
         {
             _settings = settings;
         }
 
         public TResult Deserialize<TResult>(string json)
-            => JsonConvert.DeserializeObject<TResult>(json, _settings);
+            => JsonSerializer.Deserialize<TResult>(json, _settings);
 
         public string Serialize<TInput>(TInput value)
-            => JsonConvert.SerializeObject(value, _settings);
+            => JsonSerializer.Serialize(value, _settings);
     }
 }

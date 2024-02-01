@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
-using FileContextCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -46,10 +45,10 @@ namespace Prosthetics
                     o.EnableSensitiveDataLogging(true);
                 });
 
-        builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
+            builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

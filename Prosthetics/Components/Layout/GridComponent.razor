@@ -1,10 +1,12 @@
-﻿@using Prosthetics.Components.Models.Grid
+﻿@using Prosthetics.Components.Layout.Abstractions
+@using Prosthetics.Components.Models.Grid
 @using System.Diagnostics.CodeAnalysis
 
-@typeparam TData
+@typeparam TData where TData : IGridData
 
 <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                AllowPaging="true" PageSize="5" AllowSorting="true" Data="@Data" TItem="TData" RowClick="OnRowClick">
+                AllowPaging="true" PageSize="5" AllowSorting="true" Data="@Data" TItem="TData" RowClick="OnRowClick"
+                CellRender="RowRender">
     <Columns>
         @for (int i = 0; i < ColumnsDefinition.Length; i++)
         {
@@ -43,6 +45,15 @@
     //     await dataGrid.RefreshDataAsync();
     // }
     public async Task RefreshDataAsync() => await _dataGrid.RefreshDataAsync();
+
+    void RowRender(RowRenderEventArgs<TData> args)
+    {
+        if (args.Data.ClassRow != null)
+        {
+            //args.Attributes.Add("class", args.Data.ClassRow);
+            args.Attributes.Add("style", args.Data.ClassRow);
+        }
+    }
     void OnRowClick(DataGridRowMouseEventArgs<TData> param) => this.OnRowClickEvent.InvokeAsync(param.Data);
     void OnColClick(TData param, string propertyName) => this.OnColClickEvent.InvokeAsync(new ColEvent<TData>(param, propertyName));
 }

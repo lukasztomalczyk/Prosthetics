@@ -20,6 +20,7 @@
 @inject IStore _store;
 @inject IDialogService _dialogService
 @inject DialogService _radzenDialogService
+@inject IDateTime _dateTime
 
 <h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
@@ -133,7 +134,8 @@
             AdditionalWorksCount = _.AdditionalWorksCount,
             Comments = _.Comments,
             ShortComment = _.ShortComment,
-            OrderStatusId = _.OrderStatusId
+            OrderStatusId = _.OrderStatusId,
+            ClassRow = _dateTime.IsLessThen(_.DeadLine, _dateTime.Now(), 7) ? "background-color: #FFB7AD !Important;" : null
         })
         .ToList();
 

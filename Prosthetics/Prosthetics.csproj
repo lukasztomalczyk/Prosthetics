@@ -61,7 +61,6 @@
     <ItemGroup>
         <PackageReference Include="ClosedXML" Version="0.102.1" />
         <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
-        <PackageReference Include="FileContextCore" Version="3.4.0" />
         <PackageReference Include="Mapster" Version="7.4.0" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />

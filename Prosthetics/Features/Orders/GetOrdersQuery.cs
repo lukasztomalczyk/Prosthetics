@@ -39,8 +39,8 @@ namespace Prosthetics.Features.Orders
     {
         public int Id { get; set; }
         public required string PatientFullName { get; set; }
-        public required string OrderDate { get; set; }
-        public required string DeadLine { get; set; }
+        public required DateTime OrderDate { get; set; }
+        public required DateTime DeadLine { get; set; }
         public required string Type { get; set; }
         public List<AdditionalWorkCountDto> AdditionalWorksCounts { get; set; } = new List<AdditionalWorkCountDto>();
         public int AdditionalWorksCount { get; set; }
@@ -54,8 +54,8 @@ namespace Prosthetics.Features.Orders
         {
             config.NewConfig<Order, OrderDto>()
                 .Map(dest => dest.PatientFullName, src => src.Patient == null ? string.Empty : $"{src.Patient.LastName} {src.Patient.FirstName}")
-                .Map(dest => dest.OrderDate, src => src.InsertedDate.ToString("dd-MM-yyyy"))
-                .Map(dest => dest.DeadLine, src => src.DeadLine.ToString("dd-MM-yyyy"))
+                .Map(dest => dest.OrderDate, src => src.InsertedDate)
+                .Map(dest => dest.DeadLine, src => src.DeadLine)
                 .Map(dest => dest.Status, src => src.Status.GetStatus())
                 .Map(dest => dest.Type, src => src.OrderType != null ? src.OrderType.Name : string.Empty)
                 .Map(dest => dest.OrderStatusId, src => (int)src.Status)
