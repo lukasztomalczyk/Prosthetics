@@ -3,18 +3,23 @@
     public interface IDateTime
     {
         DateTime Now();
-        bool IsLessThen(DateTime from, DateTime to, int days);
+        bool IsLessOrEqual(DateTime from, DateTime to, int days);
+        int CalculateDaysDifference(DateTime from, DateTime to);
     }
 
     public class DateTimeService : IDateTime
     {
         public DateTime Now() => DateTime.Now;
-        public bool IsLessThen(DateTime from, DateTime to, int days)
+        public bool IsLessOrEqual(DateTime from, DateTime to, int days)
         {
-            var diffResult = from.Subtract(to);
+            var diffResult = to.Subtract(from);
 
-            var test = days > diffResult.Days;
-            return days > diffResult.Days;
+            return days >= diffResult.Days;
+        }
+
+        public int CalculateDaysDifference(DateTime from, DateTime to)
+        {
+            return to.Subtract(from).Days;
         }
     }
 }

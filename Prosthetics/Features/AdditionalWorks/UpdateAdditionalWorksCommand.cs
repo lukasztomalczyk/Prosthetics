@@ -40,6 +40,7 @@ namespace Prosthetics.Features.AdditionalWorks
             var exceptIdsToBeAdded = request.AdditionalCountWorks.Select(_ => _.AdditionalWorkId).Except(order.AdditionalWorkCounts.Select(_ => _.Id));
             var toBeAdded = request.AdditionalCountWorks.Where(_ => exceptIdsToBeAdded.Contains(_.AdditionalWorkId));
 
+            // dodaje nowe
             foreach (var work in toBeAdded)
             {
                 order.AdditionalWorkCounts.Add(new AdditionalWorkCount()
@@ -47,6 +48,13 @@ namespace Prosthetics.Features.AdditionalWorks
                     Count = work.Count,
                     AdditionalWorkId = work.AdditionalWorkId
                 });
+            }
+
+            // aktualizuje istniejące
+            var toDeUpdated = request.AdditionalCountWorks.Select(_ => _.AdditionalWorkId).Except(exceptIdsToBeAdded);
+            foreach (var id in toDeUpdated)
+            {
+                order.AdditionalWorkCounts.First(_ => _.Id == id).Count = request.AdditionalCountWorks.First(_ => _.AdditionalWorkId == id).Count;
             }
 
             await _dbContext.SaveChangesAsync();

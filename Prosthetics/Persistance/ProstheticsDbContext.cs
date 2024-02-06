@@ -47,17 +47,22 @@ namespace Prosthetics.Persistance
                 new AdditionalWork()
                 {
                     Id = 1,
-                    Name = "Akrylowe powierzchnie nagryzowe"
+                    Name = "Dodatkowe elementy druciane"
                 },
                 new AdditionalWork()
                 {
                     Id = 2,
-                    Name = "Dodatkowa śruba"
+                    Name = "Akrylowe powierzchnie nagryzowe"
                 },
                 new AdditionalWork()
                 {
                     Id = 3,
-                    Name = "Dodatkowe elementy druciane"
+                    Name = "Dodatkowa śruba"
+                },
+                new AdditionalWork()
+                {
+                    Id = 4,
+                    Name = "Zapora dla języka"
                 });
 
             modelBuilder.Entity<OrderType>()
@@ -65,17 +70,152 @@ namespace Prosthetics.Persistance
                 new OrderType()
                 {
                     Id = 1,
-                    Name = "Aparat blokowy"
+                    Name = "Model diagnostyczny"
                 },
                 new OrderType()
                 {
                     Id = 2,
-                    Name = "Aparat Herbst'a"
+                    Name = "Aparat Schwarza"
                 },
                 new OrderType()
                 {
                     Id = 3,
+                    Name = "Szyna retencyjna"
+                },
+                new OrderType()
+                {
+                    Id = 4,
+                    Name = "Aparat Marco Rosa"
+                },
+                new OrderType()
+                {
+                    Id = 5,
                     Name = "Aparat Hyrax"
+                },
+                new OrderType()
+                {
+                    Id = 6,
+                    Name = "Aparat Schwarza ze śrubą Bertoniego"
+                },
+                new OrderType()
+                {
+                    Id = 7,
+                    Name = "Twinblock"
+                },
+                new OrderType()
+                {
+                    Id = 8,
+                    Name = "Szyna Michigan"
+                },
+                new OrderType()
+                {
+                    Id = 9,
+                    Name = "Szyna nagryzowa"
+                },
+                new OrderType()
+                {
+                    Id = 10,
+                    Name = "Dystalizator/Mezjalizator"
+                },
+                new OrderType()
+                {
+                    Id = 11,
+                    Name = "Hybryd Hyrax 2mikro"
+                },
+                new OrderType()
+                {
+                    Id = 12,
+                    Name = "Hybrid Hyrax 4mikro"
+                },
+                new OrderType()
+                {
+                    Id = 13,
+                    Name = "Łuk językowy lutowany"
+                },
+                new OrderType()
+                {
+                    Id = 14,
+                    Name = "Łuk podniebienny lutowany"
+                },
+                new OrderType()
+                {
+                    Id = 15,
+                    Name = "Łuk podniebienny - wkładany"
+                },
+                new OrderType()
+                {
+                    Id = 16,
+                    Name = "Naprawa"
+                },
+                new OrderType()
+                {
+                    Id = 17,
+                    Name = "Pendex"
+                },
+                new OrderType()
+                {
+                    Id = 18,
+                    Name = "Pendulum"
+                },
+                new OrderType()
+                {
+                    Id = 19,
+                    Name = "Płytka Hawleya"
+                },
+                new OrderType()
+                {
+                    Id = 20,
+                    Name = "Powielenie modelu"
+                },
+                new OrderType()
+                {
+                    Id = 21,
+                    Name = "Quad Helix"
+                },
+                new OrderType()
+                {
+                    Id = 22,
+                    Name = "Silensor"
+                },
+                new OrderType()
+                {
+                    Id = 23,
+                    Name = "Szyna wybielająca"
+                },
+                new OrderType()
+                {
+                    Id = 24,
+                    Name = "Utrzymywacz przestrzeni"
+                },
+                new OrderType()
+                {
+                    Id = 25,
+                    Name = "Lip Bumper"
+                },
+                new OrderType()
+                {
+                    Id = 26,
+                    Name = "Deprogramator Koisa"
+                },
+                new OrderType()
+                {
+                    Id = 27,
+                    Name = "Aparat Retencyjny"
+                },
+                new OrderType()
+                {
+                    Id = 28,
+                    Name = "Aparat Nance'a"
+                },
+                new OrderType()
+                {
+                    Id = 29,
+                    Name = "Aparat Herbst'a"
+                },
+                new OrderType()
+                {
+                    Id = 30,
+                    Name = "Aparat blokowy"
                 }
                 );
 

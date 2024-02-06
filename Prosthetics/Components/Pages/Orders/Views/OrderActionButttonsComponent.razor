@@ -11,11 +11,11 @@
 @inject IStore _store
 @inject IMediator _mediator
 
-<DialogComponent TComponent="ChangeStatusComponent" TReturn="string" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
+
 
 <div>
     <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>
-    <ButtonComponent Text="Status" Type="TypeOfButton.SUCCESS" OnButtonClick="@OnChangeStatusButton"></ButtonComponent>
+@*     <ButtonComponent Text="Status" Type="TypeOfButton.SUCCESS" OnButtonClick="@OnChangeStatusButton"></ButtonComponent> *@
 </div>
 
 @typeparam TData
@@ -44,12 +44,12 @@
         });
     }
 
-    protected async Task OnChangeStatusButton()
-    {
-        _store.Order.StatusOrderId = OrderStatusId;
-        _store.Order.OrderId = OrderId;
-        await _dialogService.OpenAsync<ChangeStatusComponent>(_statusdialog);
-    }
+    // protected async Task OnChangeStatusButton()
+    // {
+    //     _store.Order.StatusOrderId = OrderStatusId;
+    //     _store.Order.OrderId = OrderId;
+    //     await _dialogService.OpenAsync<ChangeStatusComponent>(_statusdialog);
+    // }
 
     private async Task OnDialogClose(dynamic value)
     {

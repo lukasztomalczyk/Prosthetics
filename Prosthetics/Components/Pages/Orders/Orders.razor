@@ -25,12 +25,13 @@
 <h3>Zlecenia dla lekarza: @_store.Order.DoctorFullName</h3>
 
 <GridComponent @ref="_orderGrid" TData="OrderViewDto" ColumnsDefinition="@_columns" Data="@_orders"
-    OnRowClickEvent="@(e => OnRowClick(e))" OnColClickEvent="@(e => OnColClick(e))"></GridComponent>
+               OnRowClickEvent="@(e => OnRowClick(e))" OnColClickEvent="@(e => OnColClick(e))"></GridComponent>
 <br />
 <ButtonComponent Text="Dodaj zlecenie" Type="TypeOfButton.PRIMARY" Style="StyleOfButton.CIRCLE" OnButtonClick="OnAddButtonClicked"></ButtonComponent>
 
 <DialogComponent TComponent="Comment" TReturn="string" OnCloseEvent="OnDialogClose" Setup="_commentDialog"></DialogComponent>
 <DialogComponent TComponent="AdditionalWorksComponent" TReturn="List<AdditionalWorkCountDto>" OnCloseEvent="OnAdditionalWorksDialogClose" Setup="_additionalWorksDialog"></DialogComponent>
+<DialogComponent TComponent="ChangeStatusComponent" TReturn="string" OnCloseEvent="OnDialogClose" Setup="_statusdialog"></DialogComponent>
 
 @code {
     [Parameter]
@@ -41,6 +42,7 @@
 
     private DialogConfig _commentDialog = new DialogConfig("Komentarz");
     private DialogConfig _additionalWorksDialog = new DialogConfig("Dodatkowe zlecenia");
+    private DialogConfig _statusdialog = new DialogConfig("Zmień status");
 
     private GridComponent<OrderViewDto> _orderGrid;
 
@@ -58,12 +60,31 @@
 
     }
 
+    protected async Task OnChangeStatusButton(int orderStatusId, int orderId)
+    {
+        _store.Order.StatusOrderId = orderStatusId;
+        _store.Order.OrderId = orderId;
+        await _dialogService.OpenAsync<ChangeStatusComponent>(_statusdialog);
+    }
+
     private async Task OnColClick(ColEvent<OrderViewDto> context)
     {
-        if (context.ColumnName == nameof(context.Data.ShortComment))
-            await ShowCommentDialog(context.Data);
-        else
-            await ShowAdditionalWorksDialog(context.Data);
+        switch (context.ColumnName)
+        {
+            case nameof(context.Data.ShortComment):
+                await ShowCommentDialog(context.Data);
+                break;
+            case nameof(context.Data.Status):
+                await OnChangeStatusButton(context.Data.OrderStatusId, context.Data.Id);
+                break;
+            default:
+                await ShowAdditionalWorksDialog(context.Data);
+                break;
+        }
+        // if (context.ColumnName == nameof(context.Data.ShortComment))
+        //     await ShowCommentDialog(context.Data);
+        // else
+        //     await ShowAdditionalWorksDialog(context.Data);
     }
 
     private async Task ShowAdditionalWorksDialog(OrderViewDto order)
@@ -101,10 +122,10 @@
     private async Task OnAdditionalWorksDialogClose(List<AdditionalWorkCountDto> additionalWorks)
     {
         await _mediator.Send(new UpdateAdditionalWorksCommand()
-        {
-            OrderId = _store.Order.OrderId,
-            AdditionalCountWorks = additionalWorks.Adapt<IEnumerable<EditedAdditionalCountWorkDto>>()
-        });
+            {
+                OrderId = _store.Order.OrderId,
+                AdditionalCountWorks = additionalWorks.Adapt<IEnumerable<EditedAdditionalCountWorkDto>>()
+            });
         await LoadDataAsync();
         await _orderGrid.RefreshDataAsync();
     }
@@ -123,20 +144,20 @@
         });
 
         var mappedOrders = list.Select(_ => new OrderViewDto()
-        {
-            Id = _.Id,
-            PatientFullName = _.PatientFullName,
-            OrderDate = _.OrderDate,
-            DeadLine = _.DeadLine,
-            Type = _.Type,
-            Status = _.Status,
-            AdditionalWorksCounts = _.AdditionalWorksCounts,
-            AdditionalWorksCount = _.AdditionalWorksCount,
-            Comments = _.Comments,
-            ShortComment = _.ShortComment,
-            OrderStatusId = _.OrderStatusId,
-            ClassRow = _dateTime.IsLessThen(_.DeadLine, _dateTime.Now(), 7) ? "background-color: #FFB7AD !Important;" : null
-        })
+            {
+                Id = _.Id,
+                PatientFullName = _.PatientFullName,
+                OrderDate = _.OrderDate,
+                DeadLine = _.DeadLine,
+                Type = _.Type,
+                Status = _.Status,
+                AdditionalWorksCounts = _.AdditionalWorksCounts,
+                AdditionalWorksCount = _.AdditionalWorksCount,
+                Comments = _.Comments,
+                ShortComment = _.ShortComment,
+                OrderStatusId = _.OrderStatusId,
+                ClassRow = CalculateColorBaseOnDeadLine(_.DeadLine)
+            })
         .ToList();
 
         mappedOrders.ForEach(_ => _.Actions = RenderHelper.Generate<OrderActionButttonsComponent<OrderViewDto>, OrderViewDto>(
@@ -145,6 +166,21 @@
                     new RenderComponentData(nameof(OrderActionButttonsComponent<OrderViewDto>.OrderStatusId), _.OrderStatusId)));
 
         return mappedOrders;
+    }
+
+    private string CalculateColorBaseOnDeadLine(DateTime deadline)
+    {
+        var diff = _dateTime.CalculateDaysDifference(_dateTime.Now(), deadline);
+
+        switch (diff)
+        {
+            case int _ when diff < 7 && diff >= 0:
+                return "background-color: #FFB7AD !Important;";
+            case int _ when diff < 0:
+                return "background-color: #F01A3A !Important; color: #f2e6e8 !Important";
+            default:
+                return null!;
+        }
     }
 
     private RenderFragment GenerateActionButtonsView(OrderDto order) => builder =>

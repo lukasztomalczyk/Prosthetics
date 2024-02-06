@@ -27,6 +27,7 @@ namespace Prosthetics.Features.Orders
             if (orderEntity != null)
             {
                 orderEntity.Status = (OrderStatus)request.NewOrderStatusId;
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
 
             return Unit.Value;
