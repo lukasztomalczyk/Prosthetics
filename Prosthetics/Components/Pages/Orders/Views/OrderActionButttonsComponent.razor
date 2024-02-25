@@ -10,7 +10,7 @@
 @inject IDialogService _dialogService
 @inject IStore _store
 @inject IMediator _mediator
-
+@inject NavigationManager _navManager
 
 
 <div>
@@ -42,6 +42,7 @@
         {
             await _mediator.Send(new DeleteOrderCommand() { OrderId = OrderId });
         });
+        _navManager.NavigateTo("/orders", true);    
     }
 
     // protected async Task OnChangeStatusButton()
