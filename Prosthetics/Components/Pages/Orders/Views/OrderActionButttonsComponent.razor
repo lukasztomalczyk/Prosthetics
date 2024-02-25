@@ -10,11 +10,11 @@
 @inject IDialogService _dialogService
 @inject IStore _store
 @inject IMediator _mediator
-
+@inject NavigationManager _navManager
 
 
 <div>
-    <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@ClientDeleteButtonClick"></ButtonComponent>
+    <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@OrderDeleteButtonClick"></ButtonComponent>
 @*     <ButtonComponent Text="Status" Type="TypeOfButton.SUCCESS" OnButtonClick="@OnChangeStatusButton"></ButtonComponent> *@
 </div>
 
@@ -36,12 +36,13 @@
         _dialogService.Setup(_radzenDialogService);
     }
 
-    protected async Task ClientDeleteButtonClick()
+    protected async Task OrderDeleteButtonClick()
     {
         await _dialogService.ConfirmAsync("Czy chcesz usunąć zamówienie?", "Usuń", async () =>
         {
             await _mediator.Send(new DeleteOrderCommand() { OrderId = OrderId });
         });
+        _navManager.NavigateTo("/orders", true);
     }
 
     // protected async Task OnChangeStatusButton()

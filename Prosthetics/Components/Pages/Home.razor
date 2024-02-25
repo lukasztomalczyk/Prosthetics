@@ -1,19 +1,56 @@
 ﻿@page "/"
+@using CommunityToolkit.Maui.Alerts
+@using CommunityToolkit.Maui.Core
 
 
 
 @code {
     protected override async Task OnInitializedAsync()
     {
-        
-        // Persmission
-        PermissionStatus writeStatus = Permissions.CheckStatusAsync<Permissions.StorageWrite>().Result;
-        PermissionStatus readStatus = Permissions.CheckStatusAsync<Permissions.StorageRead>().Result;
 
-        if (writeStatus != PermissionStatus.Granted || readStatus != PermissionStatus.Granted)
-        {
-            await Permissions.RequestAsync<Permissions.StorageRead>();
-            await Permissions.RequestAsync<Permissions.StorageWrite>();
-        }
+        // Persmission
+        // PermissionStatus writeStatus = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
+
+        // if (writeStatus != PermissionStatus.Granted)
+        // {
+        //     var storageWritePerm = await Permissions.RequestAsync<Permissions.StorageWrite>();
+
+
+        //     if ( storageWritePerm != PermissionStatus.Granted)
+        //     {
+        //         await Toast.Make($"{storageWritePerm}" ).Show();
+        //        throw new Exception("Cannot assign permission");
+        //     }
+        // }
+
+        
+        await Toast.Make($"Gdzie zapisany db: {Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}", ToastDuration.Long).Show();
+
+        // PermissionStatus writeStatus = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
+
+        // if (writeStatus != PermissionStatus.Granted)
+        // {
+        //     var storageWritePerm = await Permissions.RequestAsync<Permissions.StorageWrite>();
+
+
+        //     if ( storageWritePerm != PermissionStatus.Granted)
+        //     {
+        //         await Toast.Make($"Uprawnienia do Zapisu: niepowodzenie").Show();
+        //     }
+        // }
+
+        // PermissionStatus readStatus = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+
+        // if (readStatus != PermissionStatus.Granted)
+        // {
+        //     var storageReadPerm = await Permissions.RequestAsync<Permissions.StorageRead>();
+
+
+        //     if (storageReadPerm != PermissionStatus.Granted)
+        //     {
+        //         await Toast.Make($"Uprawnienia do odczytu: niepowodzenie").Show();
+        //         throw new Exception("Cannot assign permission");
+        //     }
+        // }
     }
-}
+}   
