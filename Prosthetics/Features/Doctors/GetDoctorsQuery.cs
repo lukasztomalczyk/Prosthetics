@@ -1,8 +1,8 @@
-﻿using Mapster;
+﻿using JuniorDevOps.Net.SqlLite;
+using Mapster;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Prosthetics.Persistance;
 using Prosthetics.Persistance.Entities;
+using ServiceStack.Data;
 
 namespace Prosthetics.Features.Doctors
 {
@@ -12,22 +12,22 @@ namespace Prosthetics.Features.Doctors
 
     public class GetDoctorsQueryHandler : IRequestHandler<GetDoctorsQuery, IEnumerable<DoctorDto>>
     {
-        private readonly ProstheticsDbContext _dbContext;
+        private readonly ISqlLiteRepository<Doctor> sqlLiteRepository;
 
-        public GetDoctorsQueryHandler(ProstheticsDbContext dbContext)
+        public GetDoctorsQueryHandler(ISqlLiteRepository<Doctor> sqlLiteRepository)
         {
-            _dbContext = dbContext;
+            Console.Write("ss");
+            this.sqlLiteRepository = sqlLiteRepository;
         }
 
         public async Task<IEnumerable<DoctorDto>> Handle(GetDoctorsQuery request, CancellationToken cancellationToken)
         {
             // TODO do usuniecia
-            _dbContext.Database.EnsureCreated();
-           // var test = await _dbContext.AdditionalWorkCounts.ToListAsync();
-            var result = await _dbContext.Doctors.ToListAsync();
+            var result = await sqlLiteRepository.GetListAsync();
 
             return result.Adapt<IEnumerable<DoctorDto>>();
         }
+
     }
 
     public class DoctorDto : IRegister

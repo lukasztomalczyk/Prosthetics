@@ -182,14 +182,4 @@
                 return null!;
         }
     }
-
-    private RenderFragment GenerateActionButtonsView(OrderDto order) => builder =>
-    {
-        var type = typeof(OrderActionButttonsComponent<>).MakeGenericType(new[] { typeof(OrderDto) });
-        builder.OpenComponent(1, type);
-        builder.AddAttribute(2, "Data", order);
-        builder.AddAttribute(3, "OrderStatusId", order.OrderStatusId);
-        builder.AddAttribute(4, "OrderId", order.Id);
-        builder.CloseComponent();
-    };
 }

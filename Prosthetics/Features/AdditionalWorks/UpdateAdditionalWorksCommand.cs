@@ -55,7 +55,7 @@ namespace Prosthetics.Features.AdditionalWorks
             foreach (var id in toDeUpdated)
             {
                 order.AdditionalWorkCounts.First(_ => _.Id == id).Count = request.AdditionalCountWorks.First(_ => _.AdditionalWorkId == id).Count;
-            }
+                }
 
             await _dbContext.SaveChangesAsync();
             return Unit.Value;
