@@ -1,12 +1,14 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using JuniorDevOps.Net.Common.Time;
+using JuniorDevOps.Net.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Prosthetics.Common;
 using Prosthetics.Extensions;
 using Prosthetics.Features;
-using Prosthetics.Persistance;
+using System.Text.Json;
+using JuniorDevOps.Net.Common.Mappers.Extensions;
+using JuniorDevOps.Net.Common.Converters;
 
 namespace Prosthetics
 {
@@ -22,30 +24,25 @@ namespace Prosthetics
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-
             builder.Services.AddMapster();
             builder.Services.AddRadzenDependency();
-            builder.Services.AddHttpClient();
+            builder.Services.AddJuniorHttpClient()
+                .AddClient("backend", httpClient => 
+                {
+                    //httpClient.BaseAddress = new Uri("http://juniordevops.ddns.net:8080/");
+                    httpClient.BaseAddress = new Uri("http://localhost:5174/");
+                });
             builder.Services.AddSingleton<IDialogService, WebDialogService>();
-            builder.Services.AddSingleton<IJsonConverter, JsonConverter>();
-            builder.Services.AddSingleton<IHttpRequestExecutor, HttpRequestExecutor>();
+            builder.Services.AddSingleton<IJsonConverter>(_ => new JsonConverter(new JsonSerializerOptions()));
+            builder.Services.AddSingleton<IExcelExporter, ExcelExporter>();
             builder.Services.AddSingleton<INotificationService, CommonNotificationService>();
 
             builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
             builder.Services.AddSingleton<IStore, Store>();
             builder.Services.AddSingleton<IDateTime, DateTimeService>();
-            builder.Services.AddSingleton<IExcelExporter, ExcelExporter>();
+  
             builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddDbContext<ProstheticsDbContext>
-                // (o => o.UseFileContextDatabase("MyDatabase"));
-                // (o => o.UseInMemoryDatabase("MyDatabase"));
-                (o =>
-                {
-                    o.UseSqlite("Filename=" + Path.Combine(FileSystem.Current.CacheDirectory, $"LocalDatabase-{AppInfo.Current.BuildString}1.db"));
-                    o.EnableSensitiveDataLogging(true);
-                });
-
-            builder.Services.AddMediatR(typeof(MauiProgram).Assembly);
+  
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();

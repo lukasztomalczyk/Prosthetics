@@ -1,19 +1,22 @@
 ﻿@page "/add-order";
 
-@using MediatR
+@using JuniorDevOps.Net.Common.Time
+@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Dialog
 @using Prosthetics.Components.Pages.Orders.Models
 @using Prosthetics.Features
-@using Prosthetics.Features.AdditionalWorks
-@using Prosthetics.Features.Orders
-@using Prosthetics.Features.Patients
+@using Prosthetics.Components.Pages.Doctors.Models
+@using Prosthetics.Api.Queries
+@using Prosthetics.Api.Commands.Patients
+@using Prosthetics.ApiModels;
+@using Prosthetics.Api.Commands.Orders
 
 @inject NavigationManager _navManager
-@inject IMediator _mediator;
-@inject IDateTime _dateTime;
+@inject IHttpRequest _httpRequest
+@inject IDateTime _dateTime
 @inject IStore _store;
 @inject IDialogService _dialogService
 @inject DialogService _radzenDialogService
@@ -44,7 +47,7 @@
     {
         _store.Order.DeadLine = _dateTime.Now();
         _dialogService.Setup(_radzenDialogService);
-        _orderTypes = await _mediator.Send(new GetOrderTypesQuery());
+        _orderTypes = await _httpRequest.Send(new GetOrderTypesQuery());
 
         await base.OnInitializedAsync();
     }
@@ -57,13 +60,13 @@
     protected async Task OnDialogClose(List<AdditionalWorkCountDto> additionalWorks)
     {
 
-        var patientId = await _mediator.Send(new AddPatientCommand()
+        var patientId = await _httpRequest.Send(new AddPatientCommand()
         {
             FirstName = _store.Patient.FirstName,
             LastName = _store.Patient.LastName
         });
 
-        await _mediator.Send(new AddOrderCommand()
+        await _httpRequest.Send(new AddOrderCommand()
         {
             PatientId = patientId,
             DeadLine = _store.Order.DeadLine,

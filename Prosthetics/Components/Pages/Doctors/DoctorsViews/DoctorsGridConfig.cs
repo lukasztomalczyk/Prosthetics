@@ -1,6 +1,5 @@
 ﻿using Prosthetics.Components.Models.Grid;
 using Prosthetics.Components.Pages.Doctors.Models;
-using Prosthetics.Features.Doctors;
 
 namespace Prosthetics.Components.Pages.Doctors.DoctorsViews
 {

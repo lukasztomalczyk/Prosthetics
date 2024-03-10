@@ -1,6 +1,5 @@
 ﻿using Prosthetics.Components.Models.Grid;
 using Prosthetics.Components.Pages.Orders.Models;
-using Prosthetics.Features.Orders;
 
 namespace Prosthetics.Components.Pages.Orders.Views
 {

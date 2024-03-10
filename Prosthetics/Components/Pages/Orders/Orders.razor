@@ -1,7 +1,8 @@
 ﻿@page "/orders"
 
+@using JuniorDevOps.Net.Common.Time
+@using JuniorDevOps.Net.Http
 @using Mapster
-@using MediatR
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
@@ -10,14 +11,13 @@
 @using Prosthetics.Components.Pages.Orders.Models
 @using Prosthetics.Components.Pages.Orders.Views
 @using Prosthetics.Features
-@using Prosthetics.Features.AdditionalWorks
-@using Prosthetics.Features.Orders
-@using Prosthetics.Persistance
-@using Prosthetics.Persistance.Entities
+@using Prosthetics.ApiModels
+@using Prosthetics.Api.Queries.Orders
+@using Prosthetics.Api.Commands.AdditionalWorks
 
 @inject NavigationManager _navManager
-@inject IMediator _mediator;
-@inject IStore _store;
+@inject IHttpRequest _httpRequest
+@inject IStore _store
 @inject IDialogService _dialogService
 @inject DialogService _radzenDialogService
 @inject IDateTime _dateTime
@@ -98,7 +98,7 @@
 
     private async Task LoadDataAsync()
     {
-        var result = await _mediator.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
+        var result = await _httpRequest.Send(new GetOrdersQuery() { DoctorId = _store.Order.DoctorId });
         _orders = TransformData(result.ToList());
     }
 
@@ -121,11 +121,11 @@
 
     private async Task OnAdditionalWorksDialogClose(List<AdditionalWorkCountDto> additionalWorks)
     {
-        await _mediator.Send(new UpdateAdditionalWorksCommand()
-            {
-                OrderId = _store.Order.OrderId,
-                AdditionalCountWorks = additionalWorks.Adapt<IEnumerable<EditedAdditionalCountWorkDto>>()
-            });
+        await _httpRequest.Send(new UpdateAdditionalWorksCommand()
+        {
+            OrderId = _store.Order.OrderId,
+            AdditionalCountWorks = additionalWorks.Adapt<IEnumerable<EditedAdditionalCountWorkDto>>()
+        });
         await LoadDataAsync();
         await _orderGrid.RefreshDataAsync();
     }

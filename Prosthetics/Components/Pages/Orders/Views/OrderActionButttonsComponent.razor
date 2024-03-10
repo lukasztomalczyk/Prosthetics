@@ -1,15 +1,15 @@
-﻿@using MediatR
+﻿@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Dialog
 @using Prosthetics.Features
-@using Prosthetics.Features.Orders
+@using Prosthetics.Api.Queries.Orders
 
 @inject DialogService _radzenDialogService
 @inject IDialogService _dialogService
 @inject IStore _store
-@inject IMediator _mediator
+@inject IHttpRequest _httpRequest
 @inject NavigationManager _navManager
 
 
@@ -40,7 +40,7 @@
     {
         await _dialogService.ConfirmAsync("Czy chcesz usunąć zamówienie?", "Usuń", async () =>
         {
-            await _mediator.Send(new DeleteOrderCommand() { OrderId = OrderId });
+            await _httpRequest.Send(new DeleteOrderCommand() { OrderId = OrderId });
         });
         _navManager.NavigateTo("/orders", true);    
     }

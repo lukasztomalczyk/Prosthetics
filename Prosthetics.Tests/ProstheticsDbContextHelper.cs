@@ -1,15 +1,15 @@
-using Microsoft.EntityFrameworkCore;
-using Prosthetics.Persistance;
+//using Microsoft.EntityFrameworkCore;
+//using Prosthetics.Persistance;
 
-namespace Prosthetics.Tests;
+//namespace Prosthetics.Tests;
 
-public static class ProstheticsDbContextHelper
-{
-    public static ProstheticsDbContext Create()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<ProstheticsDbContext>();
-        optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
+//public static class ProstheticsDbContextHelper
+//{
+//    public static ProstheticsDbContext Create()
+//    {
+//        var optionsBuilder = new DbContextOptionsBuilder<ProstheticsDbContext>();
+//        optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
 
-        return new ProstheticsDbContext(optionsBuilder.Options);
-    }
-}
+//        return new ProstheticsDbContext(optionsBuilder.Options);
+//    }
+//}

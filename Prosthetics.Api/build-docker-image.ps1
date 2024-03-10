@@ -1,0 +1,1 @@
+docker build -t juniordevops/prosthetics.api -f dockerfile .

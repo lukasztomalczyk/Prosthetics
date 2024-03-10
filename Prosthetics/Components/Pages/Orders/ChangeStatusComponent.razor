@@ -1,18 +1,18 @@
-﻿@using MediatR
+﻿@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Components.Models.Orders
 @using Prosthetics.Extensions
 @using Prosthetics.Features
-@using Prosthetics.Features.Orders
 @using Prosthetics.Models
+@using Prosthetics.Api.Commands.Orders
 
 @inject NavigationManager _navManager
 @inject NotificationService _notificationService
-@inject IMediator _mediator
 @inject IDialogService _dialogService
-@inject IStore _store;
+@inject IStore _store
+@inject IHttpRequest _httpRequest
 
 <RadzenLabel Text="Nowy status:" Component="DropDownBindValue" Style="margin-right: 8px; vertical-align: middle;" />
 <RadzenDropDown @bind-Value=@_orderStatusId Data=@_statuses ValueProperty="Id"
@@ -43,7 +43,7 @@
 
     protected async Task OnChangeClick()
     {
-        await _mediator.Send(new ChangeOrderStatusCommand()
+        await _httpRequest.Send(new ChangeOrderStatusCommand()
         {
             OrderId = _store.Order.OrderId,
             NewOrderStatusId = _orderStatusId

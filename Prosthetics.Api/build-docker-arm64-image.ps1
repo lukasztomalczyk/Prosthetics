@@ -1,0 +1,1 @@
+docker build -t juniordevops/arm64/prosthetics.api -f dockerfile-arm64 .

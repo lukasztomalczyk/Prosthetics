@@ -1,13 +1,15 @@
 ﻿@page "/add-doctor"
 
-@using MediatR
+@using JuniorDevOps.Net.Http
+@using Prosthetics.ApiModels
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
-@using Prosthetics.Features.Doctors
+@using Prosthetics.Common;
+@using Prosthetics.Api.Commands.Doctors
 
 @inject IStore _store
-@inject IMediator _mediator
+@inject IHttpRequest _httpRequest
 @inject NavigationManager _navManager
 @inject NotificationService _notificationService
 
@@ -30,11 +32,13 @@
 
     protected async Task OnAddButtonClick()
     {
-        await _mediator.Send(new AddDoctorCommand()
+        // AddDoctorCommand
+        await _httpRequest.Send(new AddDoctorCommand()
         {
             FirstName = _firstName,
             LastName = _lastName
         });
+
         _notificationService.Notify(new NotificationMessage()
         {
             Severity = NotificationSeverity.Success,

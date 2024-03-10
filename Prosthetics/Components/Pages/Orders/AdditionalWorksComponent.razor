@@ -1,13 +1,12 @@
-﻿@using MediatR
+﻿@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
-@using Prosthetics.Features.AdditionalWorks
-@using Prosthetics.Features.Orders
-@using Prosthetics.Features.Patients
+@using Prosthetics.ApiModels
+@using Prosthetics.Api.Queries.AdditionalWorks
 
-@inject IMediator _mediator;
+@inject IHttpRequest _httpRequest
 @inject NavigationManager _navManager
 @inject IStore _store;
 @inject DialogService _radzenDialogService
@@ -54,7 +53,7 @@
     protected override async Task OnInitializedAsync()
     {
         _dialogService.Setup(_radzenDialogService);
-        _additianalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
+        _additianalWorks = await _httpRequest.Send(new GetAdditionalWorksQuery());
         //OnChange(AdditionalWorksCounts.Select(_ => _.Id).ToList());
         _selectedAdditionalWorks.Clear();
         _selectedAdditionalWorks.AddRange(AdditionalWorksCounts);

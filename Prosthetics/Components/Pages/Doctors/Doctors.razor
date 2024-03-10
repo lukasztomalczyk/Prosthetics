@@ -1,7 +1,6 @@
 ﻿@page "/doctors"
 
-@using MediatR
-@using Microsoft.EntityFrameworkCore
+@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
@@ -9,13 +8,12 @@
 @using Prosthetics.Components.Pages.Doctors.DoctorsViews
 @using Prosthetics.Components.Pages.Doctors.Models
 @using Prosthetics.Features
-@using Prosthetics.Features.Doctors
-@using Prosthetics.Persistance
-@using Prosthetics.Persistance.Entities
+@using Prosthetics.ApiModels
+@using Prosthetics.Api.Queries.Doctors
 
 @inject NavigationManager _navManager
-@inject IMediator _mediator;
 @inject IStore _store;
+@inject IHttpRequest _httpRequest
 
 <h3>Wybierz lekarza</h3>
 
@@ -30,9 +28,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _doctors = TransformDoctors(await _mediator.Send(new GetDoctorsQuery()));
+        try
+        {
+            var response = await _httpRequest.Send(new GetDoctorsQuery());
+            _doctors = TransformDoctors(response);
 
-        await base.OnInitializedAsync();
+            await base.OnInitializedAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Console.Write(ex.Message);
+            throw;
+        }
     }
 
     private void OnDoctorClick(ColEvent<DoctorViewDto> context)

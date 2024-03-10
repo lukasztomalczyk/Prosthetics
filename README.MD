@@ -5,6 +5,7 @@ gdzie leży plik od bazy danych: "Filename=/data/user/0/com.companyname.prosthet
 
 dotnet publish -c Release -r Android -p:PackageFormat=Apk
 dotnet publish -f:net8.0-android -c:Release
+dotnet publish -f net8.0-android -c Release -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=prosthetics.keystore -p:AndroidSigningKeyAlias=prosthetics -p:AndroidSigningKeyPass=maksimus666 -p:AndroidSigningStorePass=maksimus666 -p:PackageFormat=Apk
 
 Paczka buduje się w lokalizacji: bin\Release\net8.0-android\publish
 

@@ -1,6 +1,12 @@
 Prosthetics/bin
 Prosthetics/obj
+Prosthetics.Api/out
+Prosthetics.Api/bin
+Prosthetics.Api/obj
 Prosthetics.Tests/bin
 Prosthetics.Tests/obj
+Prosthetics.Api.Integration.Tests/obj
+Prosthetics.Api.Integration.Tests/bin
 .vs/
+Prosthetics\Prosthetics - Backup.csproj
 Prosthetics\Prosthetics.csproj.user

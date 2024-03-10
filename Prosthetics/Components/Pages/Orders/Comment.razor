@@ -1,10 +1,10 @@
-﻿@using MediatR
+﻿@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Layout
 @using Prosthetics.Features
-@using Prosthetics.Features.Orders
+@using Prosthetics.Api.Commands.Orders
 
-@inject IMediator _mediator
+@inject IHttpRequest _httpRequest
 @inject IStore _store;
 @inject NotificationService _notificationService
 @inject IDialogService _dialogService;
@@ -31,7 +31,7 @@
         } 
         else
         {
-            await _mediator.Send(new EditOrderCommand() 
+            await _httpRequest.Send(new EditOrderCommand()
             { 
                 Comments = this.Comments,
                 OrderId = _store.Order.OrderId

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Prosthetics.Components.Layout.Abstractions;
-using Prosthetics.Features.Orders;
+using Prosthetics.ApiModels;
 
 namespace Prosthetics.Components.Pages.Orders.Models
 {

@@ -1,7 +1,6 @@
-﻿using Mapster;
+﻿using Microsoft.AspNetCore.Components;
 using Prosthetics.Components.Layout.Abstractions;
-using Microsoft.AspNetCore.Components;
-using Prosthetics.Features.Doctors;
+using Prosthetics.ApiModels;
 
 namespace Prosthetics.Components.Pages.Doctors.Models
 {

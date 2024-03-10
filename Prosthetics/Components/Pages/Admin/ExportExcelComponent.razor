@@ -3,16 +3,18 @@
 @using System.Text
 @using CommunityToolkit.Maui.Alerts
 @using CommunityToolkit.Maui.Storage
-@using MediatR
+@using JuniorDevOps.Net.Common.Time
+@using JuniorDevOps.Net.Http
+@using Prosthetics.ApiModels
 @using Prosthetics.Common
-@using Prosthetics.Components.Layout
-@using Prosthetics.Features.AdditionalWorks
 @using Prosthetics.Features.Admin
-@using Prosthetics.Features.Orders
+@using Prosthetics.Components.Layout
+@using Prosthetics.Api.Queries
+@using Prosthetics.Api.Queries.AdditionalWorks
 
 @inject IFileSaver _fileServer
 @inject IExcelExporter _excelExporter
-@inject IMediator _mediator
+@inject IHttpRequest _httpRequest
 @inject IDateTime _dateTime
 @inject NotificationService _notificationService
 
@@ -38,11 +40,12 @@ do:
 
     protected async Task GenerateReport()
     {
-        var result = await _mediator.Send(new GetDoctorsOrdersByPatientQuery()
+        var result = await _httpRequest.Send(new GetDoctorsOrdersByPatientDto()
         {
             From = _from,
             To = _to
         });
+
         var headers = await GetHeadersNamesAsync();
         _excelExporter.New();
 
@@ -59,9 +62,11 @@ do:
     }
 
     private async Task<IEnumerable<string>> GetHeadersNamesAsync()
-    {
-        var orderTypes = await _mediator.Send(new GetOrderTypesQuery());
-        var additionalWorks = await _mediator.Send(new GetAdditionalWorksQuery());
+    { 
+        //GetOrderTypesQuery
+        var orderTypes = await _httpRequest.Send(new GetOrderTypesQuery());
+        // GetAdditionalWorksQuery
+        var additionalWorks = await _httpRequest.Send(new GetAdditionalWorksQuery());
 
         var headers = orderTypes.Select(_ => _.Name).ToList();
         headers.AddRange(additionalWorks.Select(_ => _.Name));

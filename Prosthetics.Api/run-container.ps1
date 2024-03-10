@@ -1,0 +1,1 @@
+docker run -it --rm --name prosthetics.api-container -p 8080:8080 -e ASPNETCORE_URLS=http://0.0.0.0:8080 juniordevops/prosthetics.api

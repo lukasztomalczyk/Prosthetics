@@ -1,12 +1,12 @@
-﻿@using MediatR
+﻿@using JuniorDevOps.Net.Http
 @using Prosthetics.Common
 @using Prosthetics.Components.Enums
 @using Prosthetics.Components.Layout
-@using Prosthetics.Features.Doctors
+@using Prosthetics.Api.Commands.Doctors;
 
 @inject IDialogService _dialogService
 @inject DialogService _radzenDialogService
-@inject IMediator _mediator
+@inject IHttpRequest _httpRequest
 
 <ButtonComponent Text="X" Type="TypeOfButton.DANGER" OnButtonClick="@OnDoctorDeleteButtonClick"></ButtonComponent>
 
@@ -26,7 +26,7 @@
     {
         await _dialogService.ConfirmAsync("Czy chcesz usunąć lekarza?", "Usuń", async () =>
         {
-            await _mediator.Send(new DeleteDoctorCommand() { });
+            await _httpRequest.Send(new DeleteDoctorCommand() { });
         });
     }
 }
