@@ -75,4 +75,10 @@
       <ProjectReference Include="..\..\JuniorDevOps.Net.Http\JuniorDevOps.Net.Http\JuniorDevOps.Net.Http.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Platforms\Android\Resources\xml\network_security_config.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

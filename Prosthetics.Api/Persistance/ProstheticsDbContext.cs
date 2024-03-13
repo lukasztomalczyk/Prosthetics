@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Prosthetics.Api.Models;
-using Prosthetics.Persistance.Entities;
+using Prosthetics.Api.Persistance.Entities;
 
-namespace Prosthetics.Persistance
+namespace Prosthetics.Api.Persistance
 {
     public class ProstheticsDbContext : DbContext
     {

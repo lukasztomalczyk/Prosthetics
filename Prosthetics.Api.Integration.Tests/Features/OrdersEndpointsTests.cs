@@ -1,5 +1,5 @@
-﻿using Prosthetics.Persistance;
-using Prosthetics.Persistance.Entities;
+﻿using Prosthetics.Api.Persistance;
+using Prosthetics.Api.Persistance.Entities;
 using Xunit;
 using Prosthetics.Features.Orders;
 using FluentAssertions;

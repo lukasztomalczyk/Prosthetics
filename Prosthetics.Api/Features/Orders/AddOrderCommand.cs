@@ -4,8 +4,8 @@ using Prosthetics.Api.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Prosthetics.Features.AdditionalWorks;
-using Prosthetics.Persistance;
-using Prosthetics.Persistance.Entities;
+using Prosthetics.Api.Persistance;
+using Prosthetics.Api.Persistance.Entities;
 using Carter;
 using Microsoft.AspNetCore.Mvc;
 

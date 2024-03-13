@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Prosthetics.Api.Models;
-using Prosthetics.Persistance;
+using Prosthetics.Api.Persistance;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Prosthetics.Features.Orders

@@ -9,6 +9,9 @@ using Prosthetics.Features;
 using System.Text.Json;
 using JuniorDevOps.Net.Common.Mappers.Extensions;
 using JuniorDevOps.Net.Common.Converters;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Prosthetics
 {
@@ -27,13 +30,28 @@ namespace Prosthetics
             builder.Services.AddMapster();
             builder.Services.AddRadzenDependency();
             builder.Services.AddJuniorHttpClient()
-                .AddClient("backend", httpClient => 
+                .AddClient("backend", httpClient =>
                 {
-                    //httpClient.BaseAddress = new Uri("http://juniordevops.ddns.net:8080/");
-                    httpClient.BaseAddress = new Uri("http://localhost:5174/");
+                    /// https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#local-web-services-running-over-http
+                   // httpClient.BaseAddress = new Uri("http://juniordevops.ddns.net:8080/");
+                    //httpClient.BaseAddress = new Uri("http://192.168.1.47:5173/");
+                    httpClient.BaseAddress = new Uri("https://10.0.2.2:7275/");
+                })
+                .ConfigurePrimaryHttpMessageHandler(_ => 
+                {
+                    HttpClientHandler handler = new HttpClientHandler();
+                    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+                    {
+                        if (cert.Issuer.Equals("CN=localhost"))
+                            return true;
+                        return errors == System.Net.Security.SslPolicyErrors.None;
+                    };
+
+                    return handler;
                 });
+              
             builder.Services.AddSingleton<IDialogService, WebDialogService>();
-            builder.Services.AddSingleton<IJsonConverter>(_ => new JsonConverter(new JsonSerializerOptions()));
+
             builder.Services.AddSingleton<IExcelExporter, ExcelExporter>();
             builder.Services.AddSingleton<INotificationService, CommonNotificationService>();
 
@@ -50,5 +68,12 @@ namespace Prosthetics
 
             return builder.Build();
         }
-    }
+        
+        private static Func<HttpRequestMessage, X509Certificate2?, X509Chain?, SslPolicyErrors, bool> BayPassSslValidation  = (message, cert, chain, errors) =>
+        {
+            if (cert.Issuer.Equals("CN=localhost"))
+                return true;
+            return errors == System.Net.Security.SslPolicyErrors.None;
+        };
+}
 }

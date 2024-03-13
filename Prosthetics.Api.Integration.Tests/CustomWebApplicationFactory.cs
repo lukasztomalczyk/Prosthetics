@@ -3,7 +3,7 @@ using JuniorDevOps.Net.Common.Mappers.Extensions;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Prosthetics.Persistance;
+using Prosthetics.Api.Persistance;
 
 namespace Prosthetics.Api.Integration.Tests
 { 

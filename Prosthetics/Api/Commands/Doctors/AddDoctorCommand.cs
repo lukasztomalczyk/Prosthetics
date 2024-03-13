@@ -1,4 +1,5 @@
 ﻿using JuniorDevOps.Net.Http.Requests;
+using System.Text.Json.Serialization;
 
 namespace Prosthetics.Api.Commands.Doctors
 {
@@ -7,7 +8,6 @@ namespace Prosthetics.Api.Commands.Doctors
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Url => "doctors";
-
         public AddDoctorCommand Body => this;
     }
 }

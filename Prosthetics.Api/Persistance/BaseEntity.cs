@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Prosthetics.Persistance
+namespace Prosthetics.Api.Persistance
 {
     public abstract class BaseEntity
     {

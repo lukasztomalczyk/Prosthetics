@@ -1,7 +1,7 @@
 ﻿//using FluentAssertions;
 //using Microsoft.EntityFrameworkCore;
 //using Prosthetics.Features.AdditionalWorks;
-//using Prosthetics.Persistance.Entities;
+//using Prosthetics.Api.Persistance.Entities;
 
 //namespace Prosthetics.Tests.Features.AdditionalWorks
 //{

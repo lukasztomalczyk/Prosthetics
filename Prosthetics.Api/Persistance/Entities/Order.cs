@@ -1,6 +1,6 @@
 ﻿using Prosthetics.Api.Models;
 
-namespace Prosthetics.Persistance.Entities
+namespace Prosthetics.Api.Persistance.Entities
 {
     public class Order : BaseEntity
     {

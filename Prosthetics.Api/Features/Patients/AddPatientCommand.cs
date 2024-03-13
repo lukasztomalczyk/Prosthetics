@@ -3,8 +3,8 @@ using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Prosthetics.Persistance;
-using Prosthetics.Persistance.Entities;
+using Prosthetics.Api.Persistance;
+using Prosthetics.Api.Persistance.Entities;
 
 namespace Prosthetics.Features.Patients
 {

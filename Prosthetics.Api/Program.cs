@@ -4,7 +4,7 @@ using JuniorDevOps.Net.Common.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Prosthetics.Api.Extensions;
-using Prosthetics.Persistance;
+using Prosthetics.Api.Persistance;
 using System.Net;
 using System.Reflection;
 
@@ -37,7 +37,7 @@ app.SeedEfDatabase<ProstheticsDbContext>();
     app.UseSwaggerUI();
 //}
 app.MapCarter();
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.Run();
 
