@@ -19,6 +19,15 @@ namespace Prosthetics.Features.Patients
         }
     }
 
+    public class AddPatientCommandEnpoint : ICarterModule
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPost("patients", async ([FromBody] AddPatientCommand command,
+                [FromServices] IMediator mediator) => await mediator.Send(command));
+        }
+    }
+
     public class AddPatientCommandEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)

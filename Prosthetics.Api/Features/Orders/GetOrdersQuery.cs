@@ -4,12 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using Prosthetics.Features.AdditionalWorks;
 using Prosthetics.Api.Persistance;
 using Prosthetics.Api.Persistance.Entities;
+using Carter;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Prosthetics.Features.Orders
 {
     public class GetOrdersQuery : IRequest<IEnumerable<OrderDto>>
     {
         public int DoctorId { get; set; }
+    }
+
+    public class GetOrdersQueryEndpoint : ICarterModule
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapGet("orders", async ([FromServices] IMediator mediator) => await mediator.Send(new GetOrdersQuery()));
+        }
     }
 
     public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, IEnumerable<OrderDto>>

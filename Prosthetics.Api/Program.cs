@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 //});
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddMapster();
+builder.Services.AddMapster(typeof(Program).Assembly);
 builder.Services.AddScoped<IDateTime, DateTimeService>();
 builder.Services.AddCarter();
 builder.Services.AddSwaggerGen();

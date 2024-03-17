@@ -33,9 +33,9 @@ namespace Prosthetics
                 .AddClient("backend", httpClient =>
                 {
                     /// https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services?view=net-maui-8.0#local-web-services-running-over-http
-                   // httpClient.BaseAddress = new Uri("http://juniordevops.ddns.net:8080/");
+                     httpClient.BaseAddress = new Uri("http://juniordevops.ddns.net:8080/");
                     //httpClient.BaseAddress = new Uri("http://192.168.1.47:5173/");
-                    httpClient.BaseAddress = new Uri("https://10.0.2.2:7275/");
+                    //httpClient.BaseAddress = new Uri("https://10.0.2.2:7275/");
                 })
                 .ConfigurePrimaryHttpMessageHandler(_ => 
                 {
